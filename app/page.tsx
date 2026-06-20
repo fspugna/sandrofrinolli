@@ -6,6 +6,7 @@ import { PortableText } from '@portabletext/react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Esposizione, Galleria, HomeData, Notizia, Recensione, SocialItem, Video } from '@/types';
+import MainMenu from '@/components/MainMenu'
 
 async function getHomeData(): Promise<HomeData> {
   return await client.fetch(`{
@@ -41,40 +42,11 @@ export default async function Home() {
   const data = await getHomeData()
 
   return (
-    <main className="bg-[#1c1d26] text-white">
+    <main className="bg-[#1c1d26] text-white">      
 
-      <nav className="absolute top-0 left-0 w-full z-50 px-6 py-8 flex flex-col md:flex-row justify-between items-center text-white gap-6">
-        {/* Logo */}
-        <div className="relative h-10 md:h-12 w-auto shrink-0">
-          <Link href="/" className="block relative w-full h-full">
-            <Image
-              src="/assets/images/logo.png"
-              alt="Sandro Frinolli Puzzilli"
-              width={300}
-              height={80}
-              className="object-contain h-full w-auto"
-              priority
-            />
-          </Link>
-        </div>
-
-        {/* Menu - Gestito con flex-wrap per andare a capo se necessario */}
-        <ul className="hidden md:flex flex-wrap justify-center gap-x-6 gap-y-2 text-[11px] uppercase tracking-widest opacity-80 text-center">
-          <li><Link href="#about" className="hover:text-blue-400 transition-colors">Chi è</Link></li>
-          <li><Link href="#galleria" className="hover:text-blue-400 transition-colors">Galleria</Link></li>
-          <li><Link href="#video" className="hover:text-blue-400 transition-colors">Video</Link></li>
-          <li><Link href="#esposizioni" className="hover:text-blue-400 transition-colors">Esposizioni</Link></li>
-          <li><Link href="#notizie" className="hover:text-blue-400 transition-colors">Notizie</Link></li>
-          <li><Link href="#recensioni" className="hover:text-blue-400 transition-colors">Recensioni</Link></li>
-          <li><Link href="#contatti" className="hover:text-blue-400 transition-colors">Contatti</Link></li>
-        </ul>
-
-        {/* Mobile Hamburger (sempre visibile su schermi piccoli) */}
-        <button className="md:hidden">
-          <div className="w-6 h-0.5 bg-white mb-1.5" />
-          <div className="w-6 h-0.5 bg-white" />
-        </button>
-      </nav>
+      <MainMenu />
+      
+      <ScrollToTop />      
 
       {/* 1. HERO */}
       <section id="hero" className="relative h-screen flex items-center justify-center text-white overflow-hidden">
@@ -175,7 +147,7 @@ export default async function Home() {
 
         {/* ESPOSIZIONI */}
         <div id="esposizioni">
-          <h2 className="text-2xl font-serif mb-10 border-b border-white/10 pb-4 uppercase tracking-widest">Ultime Notizie</h2>
+          <h2 className="text-2xl font-serif mb-10 border-b border-white/10 pb-4 uppercase tracking-widest">Esposizioni</h2>
           <div className="space-y-8">
             {data.esposizioni.map((e: Esposizione) => (
               <article key={e._id} className="border-l border-white/10 pl-6">
@@ -195,10 +167,12 @@ export default async function Home() {
           <div className="space-y-8">
             {data.notizie.map((n: Notizia) => (
               <article key={n._id} className="border-l border-white/10 pl-6">
-                <time className="text-[10px] text-white/30 uppercase tracking-widest block mb-1">
-                  {new Date(n.data).toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' })}
-                </time>
-                <h4 className="text-lg mb-2">{n.titolo}</h4>
+                <Link href={`/notizie/${n._id}`}>
+                  <time className="text-[10px] text-white/30 uppercase tracking-widest block mb-1">
+                    {new Date(n.data).toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' })}
+                  </time>
+                  <h4 className="text-lg mb-2">{n.titolo}</h4>
+                </Link>
               </article>
             ))}
           </div>
@@ -295,9 +269,7 @@ export default async function Home() {
             />
           </div>
         </div>
-      </section>
-
-      <ScrollToTop />
+      </section>     
 
       <footer className="py-12 px-6 bg-[#161720] border-t border-white/5 text-center">
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
