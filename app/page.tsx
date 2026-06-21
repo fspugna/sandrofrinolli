@@ -26,7 +26,7 @@ async function getHomeData(): Promise<HomeData> {
     immagine
   }
 },
-    "video": *[_type == "video"] | order(data desc)[0..2],
+    "video": *[_type == "video"] | order(data desc)[0],
     "esposizioni": *[_type == "esposizione"] | order(data desc)[0..2],
     "notizie": *[_type == "notizia"] | order(data desc)[0..2],
     "recensioni": *[_type == "recensione"][0..2],
@@ -131,10 +131,34 @@ export default async function Home() {
 
       {/* 4. VIDEO */}
       <section id="video" className="bg-[#272833] py-24 px-6 text-center">
-        <h2 className="text-3xl font-serif mb-12 uppercase tracking-widest">Video</h2>
+        <h2 className="text-3xl font-serif uppercase tracking-widest">Video</h2>
 
         <div className="max-w-4xl mx-auto grid gap-12">
-          {data.video.map((v: Video) => {
+          {data.video && (
+            <section className="pt-12 pb-12 px-6">
+              {/* Usiamo max-w-7xl per farlo apparire più grande e allineato alle gallerie */}
+              <div className="max-w-7xl mx-auto">                
+                <div className="relative aspect-video w-full bg-[#272833] rounded-2xl overflow-hidden shadow-2xl">
+                  <iframe
+                    className="w-full h-full"
+                    src={`https://www.youtube.com/embed/${getYouTubeId(data.video.url)}`}
+                    title={data.video.titolo}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  ></iframe>
+                </div>
+
+                {/* Spazio per il titolo sotto il video */}
+                <div className="mt-8 text-center">
+                  <h3 className="text-2xl font-serif text-white mb-4">{data.video.titolo}</h3>
+                  <Link href="/video" className="text-blue-400 uppercase tracking-widest text-sm hover:text-blue-300 transition-colors">
+                    Vedi tutti i video →
+                  </Link>
+                </div>
+              </div>
+            </section>
+          )}
+          {/* {data.video.map((v: Video) => {
             const id = getYouTubeId(v.url);
             if (!id) return null;
 
@@ -152,7 +176,7 @@ export default async function Home() {
                 <h3 className="text-lg font-light italic opacity-80">{v.titolo}</h3>
               </div>
             );
-          })}
+          })} */}
         </div>
       </section>
 

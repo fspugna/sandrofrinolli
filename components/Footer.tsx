@@ -1,12 +1,9 @@
 export function Footer() {
-    return <footer className="py-12 px-6 bg-[#161720] border-t border-white/5 text-center">
-        <div className="max-w-5xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
-
-            {/* Copyright */}
-            <p className="text-[10px] uppercase tracking-[0.2em] opacity-40">
-                © {new Date().getFullYear()} Sandro Frinolli Puzzilli. Tutti i diritti riservati.
-            </p>
-
-        </div>
-    </footer>
+    return <footer className="py-12 border-t border-white/10 mt-20">
+            <div className="max-w-7xl mx-auto px-6 text-center">               
+                <p className="text-white/60 text-sm">
+                    © {new Date().getFullYear()} Sandro Frinolli Puzzilli. Tutti i diritti riservati.
+                </p>
+            </div>
+        </footer>
 }

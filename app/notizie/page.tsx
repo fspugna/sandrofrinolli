@@ -1,17 +1,24 @@
-import { Footer } from '@/components/Footer';
-import { Header } from '@/components/Header';
+// app/notizie/page.tsx
 import NotizieList from '@/components/NotizieList';
 import { client } from '@/sanity/lib/client';
 
-export default async function NotiziePage() {
-    // Recupera solo il primo blocco (es. prime 6)
-    const initialNotizie = await client.fetch(`*[_type == "notizia"] | order(data desc)[0..5]`);
+export default async function NotiziePage({ searchParams }: { searchParams: { page?: string } }) {
+    const page = parseInt(searchParams.page || '1');
+    const limit = 6; // Numero di articoli per pagina
+    const offset = (page - 1) * limit;
 
-    return (
-        <main className="min-h-screen bg-[#1c1d26] text-white">
-            <Header />            
-            <NotizieList initialNotizie={initialNotizie} />
-            <Footer />
-        </main>
-    );
+    // Fetch con paginazione (Sanity supporta [start..end])
+    const notizie = await client.fetch(`
+        *[_type == "notizia"] | order(data desc) [${offset}...${offset + limit}] {
+            _id,
+            titolo,
+            data,
+            contenuto
+        }
+    `);
+
+    const total = await client.fetch(`count(*[_type == "notizia"])`);
+    const totalPages = Math.ceil(total / limit);
+
+    return <NotizieList notizie={notizie} currentPage={page} totalPages={totalPages} />;
 }
