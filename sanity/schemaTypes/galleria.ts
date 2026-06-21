@@ -16,5 +16,12 @@ export const galleria = defineType({
             type: 'array',
             of: [{ type: 'reference', to: [{ type: 'opera' }] }],
         }),
+        defineField({
+            name: 'copertina',
+            title: 'Immagine di Copertina',
+            type: 'reference',
+            to: [{ type: 'opera' }],
+            description: 'Seleziona l\'opera che apparirà come anteprima della galleria.',
+        }),
     ],
 })

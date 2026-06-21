@@ -8,7 +8,13 @@ const config: Config = {
         "./app/**/*.{js,ts,jsx,tsx,mdx}",
     ],
     theme: {
-        extend: {},
+        extend: {
+            fontFamily: {
+                // Aggiungi queste definizioni
+                serif: ['"Playfair Display"', 'serif'],
+                sans: ['Inter', 'sans-serif'],
+            },
+        },
     },
     plugins: [
         typography, // Importa il plugin direttamente qui

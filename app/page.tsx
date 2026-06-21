@@ -7,6 +7,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Esposizione, Galleria, HomeData, Notizia, Recensione, SocialItem, Video } from '@/types';
 import MainMenu from '@/components/MainMenu'
+import { Footer } from '@/components/Footer'
 
 async function getHomeData(): Promise<HomeData> {
   return await client.fetch(`{
@@ -42,11 +43,11 @@ export default async function Home() {
   const data = await getHomeData()
 
   return (
-    <main className="bg-[#1c1d26] text-white">      
+    <main className="bg-[#1c1d26] text-white">
 
       <MainMenu />
-      
-      <ScrollToTop />      
+
+      <ScrollToTop />
 
       {/* 1. HERO */}
       <section id="hero" className="relative h-screen flex items-center justify-center text-white overflow-hidden">
@@ -95,22 +96,35 @@ export default async function Home() {
 
       {/* 3. GALLERIA */}
       <section id="galleria" className="py-24 px-6">
-        <h2 className="text-center text-3xl font-serif mb-16 uppercase">Galleria</h2>
+        <h2 className="text-center text-3xl font-serif mb-16 uppercase">Gallerie</h2>
         <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
           {data.gallerie.map((galleria: Galleria) => (
-            <div key={galleria._id} className="group cursor-pointer">
-              <h3 className="mb-4 text-sm uppercase tracking-widest opacity-60">{galleria.nome}</h3>
+            // Il Link avvolge tutto il contenuto della card
+            <Link
+              key={galleria._id}
+              href={`/gallerie/${galleria._id}`}
+              className="group cursor-pointer block"
+            >
+              <h3 className="mb-4 text-sm uppercase tracking-widest opacity-60 group-hover:text-blue-400 transition-colors">
+                {galleria.nome}
+              </h3>
 
               <div className="relative aspect-square bg-[#272833] overflow-hidden">
-                <Image
-                  src={urlFor(galleria.opere[0].immagine).url()}
-                  alt={galleria.opere[0].titolo || "Opera d'arte"}
-                  fill // 2. Si adatta al contenitore genitore
-                  className="object-cover transition duration-1000 group-hover:scale-105"
-                  sizes="(max-width: 768px) 100vw, 50vw" // 3. Ottimizzazione delle dimensioni
-                />
+                {galleria.opere?.[0]?.immagine ? (
+                  <Image
+                    src={urlFor(galleria.opere[0].immagine).url()}
+                    alt={galleria.opere[0].titolo || "Opera d'arte"}
+                    fill
+                    className="object-cover transition duration-1000 group-hover:scale-105"
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center opacity-20">
+                    <span>Nessuna opera</span>
+                  </div>
+                )}
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </section>
@@ -269,18 +283,9 @@ export default async function Home() {
             />
           </div>
         </div>
-      </section>     
+      </section>
 
-      <footer className="py-12 px-6 bg-[#161720] border-t border-white/5 text-center">
-        <div className="max-w-5xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
-
-          {/* Copyright */}
-          <p className="text-[10px] uppercase tracking-[0.2em] opacity-40">
-            © {new Date().getFullYear()} Sandro Frinolli Puzzilli. Tutti i diritti riservati.
-          </p>
-
-        </div>
-      </footer>
+      <Footer />
     </main>
   )
 }

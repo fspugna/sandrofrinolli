@@ -20,13 +20,13 @@ export default function MainMenu() {
 
             {/* Menu - Gestito con flex-wrap per andare a capo se necessario */}
             <ul className="hidden md:flex flex-wrap justify-center gap-x-6 gap-y-2 text-[11px] uppercase tracking-widest opacity-80 text-center">
-                <li><Link href="#about" className="hover:text-blue-400 transition-colors">Chi è</Link></li>
-                <li><Link href="#galleria" className="hover:text-blue-400 transition-colors">Galleria</Link></li>
+                {/* <li><Link href="#about" className="hover:text-blue-400 transition-colors">Chi è</Link></li> */}
+                <li><Link href="/gallerie" className="hover:text-blue-400 transition-colors">Gallerie</Link></li>
                 <li><Link href="#video" className="hover:text-blue-400 transition-colors">Video</Link></li>
-                <li><Link href="#esposizioni" className="hover:text-blue-400 transition-colors">Esposizioni</Link></li>
-                <li><Link href="#notizie" className="hover:text-blue-400 transition-colors">Notizie</Link></li>
-                <li><Link href="#recensioni" className="hover:text-blue-400 transition-colors">Recensioni</Link></li>
-                <li><Link href="#contatti" className="hover:text-blue-400 transition-colors">Contatti</Link></li>
+                <li><Link href="/esposizioni" className="hover:text-blue-400 transition-colors">Esposizioni</Link></li>
+                <li><Link href="/notizie" className="hover:text-blue-400 transition-colors">Notizie</Link></li>
+                <li><Link href="/recensioni" className="hover:text-blue-400 transition-colors">Recensioni</Link></li>
+                {/* <li><Link href="#contatti" className="hover:text-blue-400 transition-colors">Contatti</Link></li> */}
             </ul>
 
             {/* Mobile Hamburger (sempre visibile su schermi piccoli) */}
