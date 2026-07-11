@@ -5,7 +5,29 @@ export const video = defineType({
     title: 'Video',
     type: 'document',
     fields: [
-        defineField({ name: 'titolo', type: 'string' }),
+        defineField({
+            name: 'traduzioni',
+            title: 'Traduzioni',
+            type: 'array',
+            of: [{
+                type: 'object',
+                fields: [
+                    {
+                        name: 'language',
+                        title: 'Lingua',
+                        type: 'string',
+                        options: {
+                            list: [
+                                { title: 'Italiano', value: 'it' },
+                                { title: 'English', value: 'en' },
+                                { title: 'Español', value: 'es' }
+                            ],
+                        }
+                    },
+                    { name: 'titolo', type: 'string', title: 'Titolo' }
+                ]
+            }]
+        }),
         defineField({ name: 'data', type: 'date' }),
         defineField({
             name: 'url',
@@ -16,7 +38,7 @@ export const video = defineType({
     ],
     preview: {
         select: {
-            title: 'titolo',
+            title: 'traduzioni.0.titolo',
             subtitle: 'data'
         }
     }

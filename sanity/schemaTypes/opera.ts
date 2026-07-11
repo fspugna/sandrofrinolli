@@ -2,25 +2,51 @@ import { defineField, defineType } from 'sanity'
 
 export const opera = defineType({
     name: 'opera',
-    title: 'Opere',
+    title: 'Opera',
     type: 'document',
-    fields: [
-        defineField({
-            name: 'titolo',
-            title: 'Titolo',
-            type: 'string',
-            validation: (Rule) => Rule.required(),
-        }),        
+    fields: [        
         defineField({
             name: 'immagine',
             title: 'Immagine',
-            type: 'image',
-            options: { hotspot: true },
+            type: 'image', // Carichi l'immagine una sola volta qui
         }),
         defineField({
-            name: 'descrizione',
-            title: 'Descrizione',
-            type: 'text',
-        }),
+            name: 'traduzioni',
+            title: 'Traduzioni',
+            type: 'array',
+            of: [{
+                type: 'object',
+                fields: [
+                    {
+                        name: 'language',
+                        title: 'Lingua',
+                        type: 'string',
+                        options: {
+                            list: [
+                                { title: 'Italiano', value: 'it' },
+                                { title: 'English', value: 'en' },
+                                { title: 'Español', value: 'es' }
+                            ],
+                            // Opzionale: layout: 'radio' lo renderebbe una scelta a pulsanti invece di una tendina
+                        }
+                    },
+                    { name: 'titolo', type: 'string', title: 'Titolo' },
+                    { name: 'descrizione', type: 'text', title: 'Descrizione' }
+                ]
+            }]
+        })
     ],
+    preview: {
+        select: {
+            title: 'traduzioni.0.titolo', // Prende il titolo del primo elemento dell'array (es. l'italiano)
+            media: 'immagine',           // Usa il campo immagine come miniatura
+        },
+        prepare(selection) {
+            const { title, media } = selection;
+            return {
+                title: title || 'Opera senza titolo', // Fallback se il titolo manca
+                media: media,
+            };
+        },
+    },
 })

@@ -4,15 +4,14 @@ import { Galleria } from '@/types';
 import Image from 'next/image';
 import Link from 'next/link';
 
-export default async function AltreGallerie({ currentId }: { currentId: string }) {
-    // Recuperiamo le gallerie diverse da quella corrente
+export default async function AltreGallerie({ currentId, lang }: { currentId: string; lang: string }) {
     const altreGallerie = await client.fetch(`
         *[_type == "galleria" && _id != $currentId][0..2] {
             _id,
-            nome,
+            "nome": coalesce(traduzioni[language == $lang][0].nome, traduzioni[0].nome, nome),
             "copertina": copertina->immagine
         }
-    `, { currentId });
+    `, { currentId, lang });
 
     if (!altreGallerie || altreGallerie.length === 0) return null;
 
@@ -21,7 +20,7 @@ export default async function AltreGallerie({ currentId }: { currentId: string }
             <h3 className="text-2xl font-serif mb-10 text-white">Altre gallerie</h3>
             <div className="grid md:grid-cols-3 gap-8">
                 {altreGallerie.map((g: Galleria) => (
-                    <Link key={g._id} href={`/gallerie/${g._id}`} className="group relative block overflow-hidden rounded-lg aspect-[16/9] bg-[#272833]">
+                    <Link key={g._id} href={`/${lang}/gallerie/${g._id}`} className="group relative block overflow-hidden rounded-lg aspect-[16/9] bg-[#272833]">
                         {g.copertina && (
                             <Image
                                 src={urlFor(g.copertina).url()}

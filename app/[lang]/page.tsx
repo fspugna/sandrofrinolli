@@ -1,0 +1,508 @@
+import { FadeIn, FadeUp } from '@/components/Animate'
+import MainMenu from '@/components/MainMenu'
+import ScrollToTop from '@/components/ScrollToTop'
+import { getPrimaryImage, getYouTubeId } from '@/lib/utils'
+import { client } from '@/sanity/lib/client'
+import { urlFor } from '@/sanity/lib/image'
+import { Esposizione, Galleria, HomeData, Notizia, Recensione, SocialItem, Video } from '@/types'
+import { PortableText } from '@portabletext/react'
+import Image from 'next/image'
+import Link from 'next/link'
+
+const homeTranslations = {
+  it: {
+    heroLine1: 'La sintesi di una riflessione,',
+    heroLine2: "la narrazione di un'esperienza.",
+    artistLabel: "L'Artista",
+    galleries: 'Gallerie',
+    artworkAlt: "Opera d'arte",
+    videos: 'Video',
+    viewAllVideos: 'Vedi tutti i video',
+    imageFallbackAlt: 'Immagine del contenuto',
+    exhibitions: 'Esposizioni',
+    viewAllExhibitions: 'Vedi tutte le esposizioni',
+    latestNews: 'Ultime Notizie',
+    viewAllNews: 'Vedi tutte le notizie',
+    reviews: 'Recensioni',
+    readFullReview: 'Leggi lo scritto completo',
+    viewAllReviews: 'Vedi tutte le recensioni',
+    contacts: 'Contatti',
+    contactDetails: 'Recapiti',
+    phone: 'Tel:',
+    email: 'Email:',
+    socialNetworks: 'Social Network',
+  },
+  en: {
+    heroLine1: 'The synthesis of a reflection,',
+    heroLine2: 'the narration of an experience.',
+    artistLabel: 'The Artist',
+    galleries: 'Galleries',
+    artworkAlt: 'Artwork',
+    videos: 'Videos',
+    viewAllVideos: 'See all videos',
+    imageFallbackAlt: 'Content image',
+    exhibitions: 'Exhibitions',
+    viewAllExhibitions: 'See all exhibitions',
+    latestNews: 'Latest News',
+    viewAllNews: 'See all news',
+    reviews: 'Reviews',
+    readFullReview: 'Read the full text',
+    viewAllReviews: 'See all reviews',
+    contacts: 'Contacts',
+    contactDetails: 'Contact Details',
+    phone: 'Phone:',
+    email: 'Email:',
+    socialNetworks: 'Social Networks',
+  },
+  es: {
+    heroLine1: 'La sintesis de una reflexion,',
+    heroLine2: 'la narracion de una experiencia.',
+    artistLabel: 'El Artista',
+    galleries: 'Galerias',
+    artworkAlt: 'Obra de arte',
+    videos: 'Videos',
+    viewAllVideos: 'Ver todos los videos',
+    imageFallbackAlt: 'Imagen del contenido',
+    exhibitions: 'Exposiciones',
+    viewAllExhibitions: 'Ver todas las exposiciones',
+    latestNews: 'Ultimas Noticias',
+    viewAllNews: 'Ver todas las noticias',
+    reviews: 'Resenas',
+    readFullReview: 'Leer el texto completo',
+    viewAllReviews: 'Ver todas las resenas',
+    contacts: 'Contactos',
+    contactDetails: 'Datos de contacto',
+    phone: 'Tel:',
+    email: 'Email:',
+    socialNetworks: 'Redes Sociales',
+  },
+} as const
+
+const dateLocales = {
+  it: 'it-IT',
+  en: 'en-US',
+  es: 'es-ES',
+} as const
+
+async function getHomeData(lang: string): Promise<HomeData> {
+  return await client.fetch(`{
+    "header": *[_type == "header"][0],
+    "about": *[_type == "about" && language == "${lang}"][0]{
+      titolo,
+      biografia,
+      foto,
+      sfondo
+    },
+    "gallerie": *[_type == "galleria"]{
+      _id,    
+      "nome": traduzioni[language == "${lang}"][0].nome,
+      "opere": opere[]->{
+        _id,        
+        "titolo": traduzioni[language == "${lang}"][0].titolo,
+        "descrizione": traduzioni[language == "${lang}"][0].descrizione,
+        immagine
+      }
+    },
+    "video": *[_type == "video"] | order(data desc)[0] {
+      _id,
+      "titolo": coalesce(traduzioni[language == "${lang}"][0].titolo, traduzioni[0].titolo),
+      data,
+      url
+    },
+    "esposizioni": *[_type == "esposizione"] | order(data desc)[0..3]{
+      _id,
+      data,
+      immagini,
+      contenuto,
+      "titolo": coalesce(traduzioni[language == "${lang}"][0].titolo, traduzioni[0].titolo, titolo)
+    },
+    "notizie": *[_type == "notizia"] | order(data desc)[0..3]{
+      _id,
+      data,
+      immagini,
+      contenuto,
+      "titolo": coalesce(traduzioni[language == "${lang}"][0].titolo, traduzioni[0].titolo, titolo)
+    },
+    "recensioni": *[_type == "recensione"] | order(data desc)[0..3]{
+      _id,
+      data,
+      immagini,
+      contenuto,
+      "titolo": coalesce(traduzioni[language == "${lang}"][0].titolo, traduzioni[0].titolo, titolo)
+    },
+    "contatti": *[_type == "contatti"][0]{
+      telefono,
+      email,
+      "fotoUrl": foto.asset->url,
+      social
+    }
+  }`)
+}
+
+export default async function Home({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang } = await params;
+  const data = await getHomeData(lang);
+  const t = homeTranslations[lang as keyof typeof homeTranslations] || homeTranslations.it;
+  const dateLocale = dateLocales[lang as keyof typeof dateLocales] || dateLocales.it;
+
+  // Filtriamo all'origine eventuali gallerie strutturate nel database ma prive di opere effettive,
+  // così da prevenire i quadrati grigi vuoti sulla griglia della Home.
+  const gallerieValide = data.gallerie?.filter((g: Galleria) => g.opere && g.opere.length > 0) || [];
+
+  return (
+    <main className="bg-[#1c1d26] text-white relative min-h-screen selection:bg-blue-500/30">
+
+      <div className="relative z-10">
+        <MainMenu lang={lang} />
+        <ScrollToTop />
+
+        {/* 1. HERO */}
+        <section id="hero" className="relative h-screen flex items-center justify-center text-white overflow-hidden">
+          <FadeIn duration={2.5}>
+            <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${urlFor(data.header.foto).url()})` }}>
+              <div className="absolute inset-0 bg-black/45" />
+            </div>
+          </FadeIn>
+
+          <div className="relative z-20 text-center px-6 w-full max-w-4xl mx-auto">
+            {/* Aggiunto il delay per far comparire il testo dopo l'inizio dello sfondo */}
+            <FadeUp delay={0.8}>
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-light tracking-tighter leading-tight">
+                {t.heroLine1}<br />
+                <span className="italic font-serif">{t.heroLine2}</span>
+              </h1>
+            </FadeUp>
+          </div>
+        </section>
+
+        {/* 2. CHI È - Rimossa la card rigida dal testo per farlo fluttuare sul vetro sfocato */}
+        {data.about && (
+          <section id="chi-è" className="relative py-28 px-6 border-y border-white/5 overflow-hidden min-h-[600px] flex items-center">
+            {data.about?.sfondo && (
+              <>
+                <div
+                  className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
+                  style={{
+                    backgroundImage: `url(${urlFor(data.about.sfondo).url()})`,
+                    backgroundAttachment: 'fixed',
+                    maskImage: 'linear-gradient(to bottom, transparent, black 15%, black 85%, transparent)',
+                    WebkitMaskImage: 'linear-gradient(to bottom, transparent, black 15%, black 85%, transparent)'
+                  }}
+                />
+                <div className="absolute inset-0 bg-[#1c1d26]/85 backdrop-blur-xs z-0 pointer-events-none" />
+              </>
+            )}
+
+            <div className="relative z-10 max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center w-full">
+              {/* Foto dell'artista: Integrazione cromatica soft (Effetto Grayscale raffinato) */}
+              <div className="relative aspect-[4/5] w-full shadow-2xl rounded-lg overflow-hidden border border-white/10 bg-black/20 group">
+                <FadeIn>
+                  <Image
+                    src={urlFor(data.about.foto).url()}
+                    alt="Sandro Frinolli Puzzilli"
+                    fill
+                    className="object-cover grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-1000 ease-out"
+                  />
+                </FadeIn>
+              </div>
+
+              {/* Testo Biografia pulito e fluttuante */}
+              <div className="space-y-6 flex flex-col justify-center">
+                <FadeUp delay={0.2} className="space-y-6">
+                  <h2 className="text-sm uppercase tracking-[0.4em] opacity-40 italic text-blue-400">{t.artistLabel}</h2>
+                  <h3 className="text-4xl font-serif tracking-wide text-white/95">{data.about.titolo || "Sandro Frinolli Puzzilli"}</h3>
+                  <div className="text-white/80 leading-relaxed font-light text-lg space-y-4">
+                    <PortableText value={data.about?.biografia} />
+                  </div>
+                </FadeUp>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* 3. GALLERIA - Layout dinamico e bilanciato che evita buchi vuoti */}
+        <section id="galleria" className="py-28 px-6">
+          <FadeUp>
+            <h2 className="text-center text-3xl font-serif mb-20 uppercase tracking-[0.2em] text-white/90">{t.galleries}</h2>
+          </FadeUp>
+
+          {/* Se c'è solo una o due gallerie, la griglia si adatta e si centra automaticamente */}
+          <div className={`grid gap-12 max-w-5xl mx-auto ${gallerieValide.length === 1 ? 'grid-cols-1 max-w-2xl' : 'md:grid-cols-2'}`}>
+            {gallerieValide.map((galleria: Galleria, index: number) => (
+              <FadeUp key={galleria._id} delay={index * 0.15}>
+                <Link
+                  href={`/${lang}/gallerie/${galleria._id}`}
+                  className="group cursor-pointer block"
+                >
+                  <h3 className="mb-4 text-xs uppercase tracking-[0.3em] opacity-40 group-hover:opacity-100 group-hover:text-blue-400 transition-all duration-300">
+                    {galleria.nome}
+                  </h3>
+
+                  <div className="relative aspect-[4/3] bg-[#272833] overflow-hidden rounded-md shadow-[0_30px_60px_rgba(0,0,0,0.6)] border border-white/5 group-hover:border-white/10 transition-all duration-500">
+                    <Image
+                      src={urlFor(galleria.opere[0].immagine).url()}
+                      alt={galleria.opere[0].titolo || t.artworkAlt}
+                      fill
+                      className="object-cover transition duration-1000 ease-out group-hover:scale-103"
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                    />
+                    <div className="absolute inset-0 bg-black/15 group-hover:bg-black/0 transition-colors duration-500" />
+                  </div>
+                </Link>
+              </FadeUp>
+            ))}
+          </div>
+        </section>
+
+        {/* 4. VIDEO - Addolcito il blocco video per evitare rettangoli neri netti */}
+        <section id="video" className="relative bg-gradient-to-b from-transparent via-[#272833]/40 to-transparent backdrop-blur-sm py-28 px-6 text-center border-y border-white/5">
+          <FadeUp>
+            <h2 className="text-3xl font-serif uppercase tracking-[0.2em] text-white/90 mb-12">{t.videos}</h2>
+          </FadeUp>
+
+          <div className="max-w-4xl mx-auto">
+            {data.video && (() => {
+              const videoItem: Video = data.video;
+              return (
+                <div className="px-6">
+                  <div className="max-w-3xl mx-auto">
+                    <FadeIn delay={0.2}>
+                      {/* L'ombra profonda e l'overlay integrano l'iframe nativo senza stacchi sgradevoli */}
+                      <div className="relative aspect-video w-full bg-black/60 rounded-xl overflow-hidden shadow-[0_25px_60px_rgba(0,0,0,0.7)] border border-white/10">
+                        <iframe
+                          className="w-full h-full"
+                          src={`https://www.youtube.com/embed/${getYouTubeId(videoItem.url)}`}
+                          title={videoItem.titolo}
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                        ></iframe>
+                      </div>
+                    </FadeIn>
+
+                    <FadeUp delay={0.3} className="mt-10 text-center">
+                      <h3 className="text-xl font-serif text-white/90 mb-4 tracking-wide">{videoItem.titolo}</h3>
+                      <Link href={`/${lang}/video`} className="inline-block text-xs uppercase tracking-widest text-blue-400 border-b border-blue-400/20 pb-1 hover:text-blue-300 hover:border-blue-300 transition-all">
+                        {t.viewAllVideos} →
+                      </Link>
+                    </FadeUp>
+                  </div>
+                </div>
+              );
+            })()}
+          </div>
+        </section>
+
+        {/* 5. ESPOSIZIONI E NOTIZIE - Aggiunte micro-animazioni di accento */}
+        <section className="py-28 px-6 grid md:grid-cols-2 gap-20 max-w-7xl mx-auto">
+          {/* ESPOSIZIONI */}
+          <div id="esposizioni">
+            <FadeUp>
+              <h2 className="text-xs uppercase tracking-[0.3em] opacity-40 mb-10 border-b border-white/10 pb-4 font-mono">{t.exhibitions}</h2>
+            </FadeUp>
+            <div className="grid gap-6">
+              {data.esposizioni.map((e: Esposizione, index: number) => (
+                <FadeUp key={e._id} delay={index * 0.1}>
+                  <article>
+                    <Link href={`/${lang}/esposizioni/${e._id}`} className="group flex items-start gap-4 rounded-xl border border-white/5 bg-black/20 p-4 hover:border-blue-500/20 hover:bg-black/30 transition-all duration-300 shadow-xl">
+                      {(() => {
+                        const image = getPrimaryImage(e.immagini, e.contenuto)
+                        return image ? (
+                          <div className="relative size-24 shrink-0 overflow-hidden rounded-md border border-white/10 bg-black/30">
+                            <Image
+                              src={urlFor(image).url()}
+                              alt={e.titolo || t.imageFallbackAlt}
+                              fill
+                              className="object-cover transition-transform duration-700 group-hover:scale-105"
+                              sizes="96px"
+                            />
+                          </div>
+                        ) : null
+                      })()}
+                      <div className="min-w-0 flex-1">
+                        <time className="text-[10px] text-white/40 uppercase tracking-widest block mb-3 font-mono">
+                          {new Date(e.data).toLocaleDateString(dateLocale, { day: 'numeric', month: 'long', year: 'numeric' })}
+                        </time>
+                        <h4 className="text-lg font-light text-white/80 group-hover:text-blue-400 transition-colors duration-300 leading-snug">
+                          {e.titolo}
+                        </h4>
+                      </div>
+                    </Link>
+                  </article>
+                </FadeUp>
+              ))}
+            </div>
+            <FadeUp delay={0.3}>
+              <Link href={`/${lang}/esposizioni`} className="mt-12 inline-block text-[11px] uppercase tracking-widest text-white/40 hover:text-white transition-colors border-b border-white/10 pb-1">
+                {t.viewAllExhibitions} →
+              </Link>
+            </FadeUp>
+          </div>
+
+          {/* NOTIZIE */}
+          <div id="notizie">
+            <FadeUp>
+              <h2 className="text-xs uppercase tracking-[0.3em] opacity-40 mb-10 border-b border-white/10 pb-4 font-mono">{t.latestNews}</h2>
+            </FadeUp>
+            <div className="grid gap-6">
+              {data.notizie.map((n: Notizia, index: number) => (
+                <FadeUp key={n._id} delay={index * 0.1}>
+                  <article>
+                    <Link href={`/${lang}/notizie/${n._id}`} className="group flex items-start gap-4 rounded-xl border border-white/5 bg-black/20 p-4 hover:border-blue-500/20 hover:bg-black/30 transition-all duration-300 shadow-xl">
+                      {(() => {
+                        const image = getPrimaryImage(n.immagini, n.contenuto)
+                        return image ? (
+                          <div className="relative size-24 shrink-0 overflow-hidden rounded-md border border-white/10 bg-black/30">
+                            <Image
+                              src={urlFor(image).url()}
+                              alt={n.titolo || t.imageFallbackAlt}
+                              fill
+                              className="object-cover transition-transform duration-700 group-hover:scale-105"
+                              sizes="96px"
+                            />
+                          </div>
+                        ) : null
+                      })()}
+                      <div className="min-w-0 flex-1">
+                        <time className="text-[10px] text-white/40 uppercase tracking-widest block mb-3 font-mono">
+                          {new Date(n.data).toLocaleDateString(dateLocale, { day: 'numeric', month: 'long', year: 'numeric' })}
+                        </time>
+                        <h4 className="text-lg font-light text-white/80 group-hover:text-blue-400 transition-colors duration-300 leading-snug">
+                          {n.titolo}
+                        </h4>
+                      </div>
+                    </Link>
+                  </article>
+                </FadeUp>
+              ))}
+            </div>
+            <FadeUp delay={0.3}>
+              <Link href={`/${lang}/notizie`} className="mt-12 inline-block text-[11px] uppercase tracking-widest text-white/40 hover:text-white transition-colors border-b border-white/10 pb-1">
+                {t.viewAllNews} →
+              </Link>
+            </FadeUp>
+          </div>
+        </section>
+
+        {/* 6. RECENSIONI - Layout a doppia colonna per valorizzare lunghezze differenti */}
+        <section id="recensioni" className="bg-[#272833]/60 backdrop-blur-md py-28 px-6 border-y border-white/5">
+          <div className="max-w-5xl mx-auto text-center">
+            <FadeUp>
+              <h2 className="text-xs uppercase tracking-[0.3em] opacity-40 mb-16 border-b border-white/10 pb-4 font-mono max-w-4xl mx-auto">
+                {t.reviews}
+              </h2>
+            </FadeUp>
+
+            <div className="grid md:grid-cols-2 gap-8 items-start text-left mb-12">
+              {data.recensioni.map((r: Recensione, index: number) => (
+                <FadeUp key={r._id} delay={index * 0.15}>
+                  <Link
+                    href={`/${lang}/recensioni/${r._id}`}
+                    className="group flex items-start gap-4 rounded-xl border border-white/5 bg-black/20 p-4 hover:border-blue-500/20 hover:bg-black/30 transition-all duration-300 shadow-xl min-h-[140px]"
+                  >
+                    {(() => {
+                      const image = getPrimaryImage(r.immagini, r.contenuto)
+                      return image ? (
+                        <div className="relative size-24 shrink-0 overflow-hidden rounded-md border border-white/10 bg-black/30">
+                          <Image
+                            src={urlFor(image).url()}
+                            alt={r.titolo || t.imageFallbackAlt}
+                            fill
+                            className="object-cover transition-transform duration-700 group-hover:scale-105"
+                            sizes="96px"
+                          />
+                        </div>
+                      ) : null
+                    })()}
+                    <div className="min-w-0 flex flex-col justify-between grow self-stretch">
+                      {r.data ? (
+                        <time className="text-[10px] text-white/40 uppercase tracking-widest block mb-3 font-mono">
+                          {new Date(r.data).toLocaleDateString(dateLocale, { day: 'numeric', month: 'long', year: 'numeric' })}
+                        </time>
+                      ) : null}
+                      <blockquote className="text-lg font-serif italic text-white/80 group-hover:text-blue-400 transition-colors leading-relaxed">
+                        “{r.titolo}”
+                      </blockquote>
+                      <span className="text-[10px] uppercase tracking-[0.2em] text-white/30 mt-6 block group-hover:text-white/60 transition-colors">
+                        {t.readFullReview} →
+                      </span>
+                    </div>
+                  </Link>
+                </FadeUp>
+              ))}
+            </div>
+
+            <FadeUp delay={0.4}>
+              <Link
+                href={`/${lang}/recensioni`}
+                className="inline-block text-[11px] uppercase tracking-widest text-white/40 hover:text-white transition-colors border-b border-white/10 pb-1"
+              >
+                {t.viewAllReviews} →
+              </Link>
+            </FadeUp>
+          </div>
+        </section>
+
+        {/* 7. CONTATTI - Bottoni social alleggeriti (Sottili e Minimali) */}
+        <section id="contatti" className="py-28 px-6 bg-[#1a1b26]/90 backdrop-blur-md text-white">
+          <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-16 items-center">
+            <div className="space-y-12">
+              <FadeUp>
+                <h2 className="text-xs uppercase tracking-[0.3em] opacity-40 border-b border-white/10 pb-6 font-mono">
+                  {t.contacts}
+                </h2>
+              </FadeUp>
+
+              <div className="space-y-8">
+                <FadeUp delay={0.15}>
+                  <div>
+                    <h3 className="text-[10px] uppercase tracking-[0.2em] opacity-30 mb-4 font-mono">{t.contactDetails}</h3>
+                    <div className="space-y-3 text-lg font-light">
+                      <p className="flex items-center">
+                        <span className="opacity-20 w-20 text-xs uppercase tracking-wider font-mono">{t.phone}</span>
+                        <a href={`tel:${data.contatti.telefono}`} className="hover:text-blue-400 transition-colors font-light">{data.contatti.telefono}</a>
+                      </p>
+                      <p className="flex items-center">
+                        <span className="opacity-20 w-20 text-xs uppercase tracking-wider font-mono">{t.email}</span>
+                        <a href={`mailto:${data.contatti.email}`} className="hover:text-blue-400 transition-colors text-base md:text-lg font-light break-all">{data.contatti.email}</a>
+                      </p>
+                    </div>
+                  </div>
+                </FadeUp>
+
+                <FadeUp delay={0.3}>
+                  <div>
+                    <h3 className="text-[10px] uppercase tracking-[0.2em] opacity-30 mb-6 font-mono">{t.socialNetworks}</h3>
+                    <div className="flex flex-wrap gap-3">
+                      {data.contatti.social.map((s: SocialItem) => (
+                        <a
+                          key={s.nome}
+                          href={s.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="px-5 py-2.5 border border-white/5 rounded text-[10px] uppercase tracking-widest bg-white/[0.02] hover:bg-white hover:text-[#1a1b26] hover:border-white transition-all duration-400"
+                        >
+                          {s.nome}
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                </FadeUp>
+              </div>
+            </div>
+
+            <div className="relative aspect-[3/4] w-full overflow-hidden rounded-md bg-black/20 border border-white/5 shadow-2xl group">
+              <FadeIn delay={0.2}>
+                <Image
+                  src={data.contatti.fotoUrl}
+                  alt="Sandro Frinolli Puzzilli"
+                  fill
+                  className="object-cover transition-all duration-1000 ease-in-out grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-102"
+                />
+              </FadeIn>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  )
+}

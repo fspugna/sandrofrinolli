@@ -20,6 +20,8 @@ export interface PortableImageProps {
     className?: string;
 }
 
+export type PortableContentBlock = PortableTextBlock | SanityImage;
+
 export interface Header {
     foto: SanityImage;
 }
@@ -28,6 +30,7 @@ export interface About {
     titolo: string;
     biografia: PortableTextBlock[];
     foto: SanityImage;
+    sfondo: SanityImage;
 }
 
 export interface SocialItem {
@@ -46,21 +49,24 @@ export interface Esposizione {
     _id: string;
     titolo: string;
     data: string;
-    contenuto: PortableTextBlock[];
+    immagini?: SanityImage[];
+    contenuto: PortableContentBlock[];
 }
 
 export interface Notizia {
     _id: string;
     titolo: string;
     data: string;
-    contenuto: PortableTextBlock[];
+    immagini?: SanityImage[];
+    contenuto: PortableContentBlock[];
 }
 
 export interface Recensione {
     _id: string;
     titolo: string;
     data: string;
-    contenuto: PortableTextBlock[];
+    immagini?: SanityImage[];
+    contenuto: PortableContentBlock[];
 }
 
 export interface Opera {
@@ -77,10 +83,21 @@ export interface Galleria {
     copertina: SanityImage;
 }
 
+export interface VideoTranslation {
+    language: string;
+    titolo?: string;
+}
+
+export interface LocalizedContentTranslation {
+    language: string;
+    titolo?: string;
+    contenuto?: PortableContentBlock[];
+}
+
 export interface Video {  
     _id: string;
     titolo: string;
-    data: string,
+    data?: string;
     url: string;
 }
 
@@ -88,7 +105,7 @@ export interface HomeData {
     header: Header;
     about: About;
     gallerie: Galleria[];
-    video: Video[];
+    video?: Video;
     esposizioni: Esposizione[];
     notizie: Notizia[];
     recensioni: Recensione[];

@@ -5,10 +5,29 @@ export const galleria = defineType({
     title: 'Gallerie',
     type: 'document',
     fields: [
+        // Sostituiamo il campo "nome" singolo con un array di traduzioni
         defineField({
-            name: 'nome',
-            title: 'Nome Galleria',
-            type: 'string',
+            name: 'traduzioni',
+            title: 'Traduzioni',
+            type: 'array',
+            of: [{
+                type: 'object',
+                fields: [
+                    { 
+                        name: 'language', 
+                        title: 'Lingua', 
+                        type: 'string',
+                        options: {
+                            list: [
+                                { title: 'Italiano', value: 'it' },
+                                { title: 'English', value: 'en' },
+                                { title: 'Español', value: 'es' }
+                            ]
+                        }
+                    },
+                    { name: 'nome', title: 'Nome Galleria', type: 'string' }
+                ]
+            }]
         }),
         defineField({
             name: 'opere',
@@ -24,4 +43,17 @@ export const galleria = defineType({
             description: 'Seleziona l\'opera che apparirà come anteprima della galleria.',
         }),
     ],
+    // Miglioriamo l'anteprima anche qui!
+    preview: {
+        select: {
+            title: 'traduzioni.0.nome',
+            media: 'copertina.immagine' // Sanity segue il riferimento all'opera per prendere l'immagine
+        },
+        prepare(selection) {
+            return {
+                title: selection.title || 'Galleria senza nome',
+                media: selection.media
+            };
+        }
+    }
 })

@@ -5,21 +5,41 @@ export const recensione = defineType({
     title: 'Recensioni',
     type: 'document',
     fields: [
-        defineField({ name: 'titolo', type: 'string' }),
+        defineField({
+            name: 'traduzioni',
+            title: 'Traduzioni',
+            type: 'array',
+            of: [{
+                type: 'object',
+                fields: [
+                    {
+                        name: 'language',
+                        title: 'Lingua',
+                        type: 'string',
+                        options: {
+                            list: [
+                                { title: 'Italiano', value: 'it' },
+                                { title: 'English', value: 'en' },
+                                { title: 'Español', value: 'es' }
+                            ],
+                        }
+                    },
+                    { name: 'titolo', type: 'string', title: 'Titolo' },
+                    { name: 'contenuto', title: 'Contenuto', type: 'array', of: [{ type: 'block' }] }
+                ]
+            }]
+        }),
         defineField({ name: 'data', type: 'date' }),
         defineField({
-            name: 'contenuto',
-            title: 'Contenuto (Testo e Immagini)',
+            name: 'immagini',
+            title: 'Immagini',
             type: 'array',
-            of: [
-                { type: 'block' }, // Permette testo, grassetti, elenchi
-                { type: 'image' }   // Permette di inserire immagini tra i paragrafi
-            ]
-        })
+            of: [{ type: 'image' }]
+        }),
     ],
     preview: {
         select: {
-            title: 'titolo',
+            title: 'traduzioni.0.titolo',
             subtitle: 'data'
         }
     }
