@@ -1,4 +1,5 @@
 import { FadeIn, FadeUp } from '@/components/Animate'
+import HeroBackground from '@/components/HeroBackground'
 import MainMenu from '@/components/MainMenu'
 import ScrollToTop from '@/components/ScrollToTop'
 import { getPrimaryImage, getYouTubeId } from '@/lib/utils'
@@ -86,7 +87,9 @@ const dateLocales = {
 
 async function getHomeData(lang: string): Promise<HomeData> {
   return await client.fetch(`{
-    "header": *[_type == "header"][0],
+    "header": *[_type == "header"][0]{
+      fotoHeader
+    },
     "about": *[_type == "about" && language == "${lang}"][0]{
       titolo,
       biografia,
@@ -159,9 +162,7 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
         {/* 1. HERO */}
         <section id="hero" className="relative h-screen flex items-center justify-center text-white overflow-hidden">
           <FadeIn duration={2.5}>
-            <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${urlFor(data.header.foto).url()})` }}>
-              <div className="absolute inset-0 bg-black/45" />
-            </div>
+            <HeroBackground immagini={data.header?.fotoHeader || []} />
           </FadeIn>
 
           <div className="relative z-20 text-center px-6 w-full max-w-4xl mx-auto">

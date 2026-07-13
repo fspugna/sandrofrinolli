@@ -1,23 +1,28 @@
 import { defineField, defineType } from 'sanity'
 
 export const header = defineType({
-    name: 'header',    
+    name: 'header',
     type: 'document',
-    fields: [             
+    fields: [
         defineField({
-            name: 'foto',
-            title: 'Foto Homepage',
-            type: 'image',
+            name: 'fotoHeader',
+            title: 'Foto Homepage (Casuali)',
+            type: 'array',
+            of: [{ type: 'image' }],
+            options: {
+                layout: 'grid'
+            }
         }),
     ],
     preview: {
         select: {
-            media: 'foto',
+            images: 'fotoHeader',
         },
-        prepare({ media }) {
+        prepare({ images }) {
             return {
                 title: 'Header Homepage',
-                media,
+                subtitle: `${images ? images.length : 0} immagini caricate`,
+                media: images && images.length > 0 ? images[0] : undefined,
             }
         },
     },

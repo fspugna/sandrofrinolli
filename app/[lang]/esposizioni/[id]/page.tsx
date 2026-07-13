@@ -117,7 +117,7 @@ export default async function EsposizionePage({ params }: { params: Promise<{ id
             {/* 3. Sezione Suggerimenti Animata (InView quando l'utente scende con lo scroll) */}
             {altreEsposizioni.length > 0 && (
                 <section className="bg-[#272833] py-20 px-6 mt-12 overflow-hidden">
-                    <div className="max-w-5xl mx-auto">
+                    <div className="max-w-6xl mx-auto">
 
                         <FadeUp>
                             <div className="flex justify-between items-end mb-10">
@@ -131,7 +131,7 @@ export default async function EsposizionePage({ params }: { params: Promise<{ id
                             </div>
                         </FadeUp>
 
-                        <div className="grid md:grid-cols-3 gap-8">
+                        <div className="grid md:grid-cols-2 gap-8">
                             {altreEsposizioni.map((e: Esposizione, index: number) => (
                                 // Effetto stagger basato sull'indice per far apparire le esposizioni correlate una dopo l'altra
                                 <FadeUp key={e._id} delay={index * 0.15}>

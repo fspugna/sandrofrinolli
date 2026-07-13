@@ -23,7 +23,7 @@ export interface PortableImageProps {
 export type PortableContentBlock = PortableTextBlock | SanityImage;
 
 export interface Header {
-    foto: SanityImage;
+    fotoHeader: SanityImage[];
 }
 
 export interface About {
