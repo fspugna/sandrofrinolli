@@ -16,9 +16,9 @@ export default async function AltreGallerie({ currentId, lang }: { currentId: st
     if (!altreGallerie || altreGallerie.length === 0) return null;
 
     return (
-        <section className="mt-24 border-t border-white/10 pt-16">
+        <section className="mt-24 border-t border-white/10 pt-4">
             <h3 className="text-2xl font-serif mb-10 text-white">Altre gallerie</h3>
-            <div className="grid md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-6">
                 {altreGallerie.map((g: Galleria) => (
                     <Link key={g._id} href={`/${lang}/gallerie/${g._id}`} className="group relative block overflow-hidden rounded-lg aspect-[16/9] bg-[#272833]">
                         {g.copertina && (

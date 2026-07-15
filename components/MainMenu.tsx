@@ -46,9 +46,13 @@ export default function MainMenu({ lang = 'it' }: { lang?: string }) {
     const getLocalizedHref = (path: string) => `/${currentLang}${path === '/' ? '' : path}`;
 
     return (
-        <nav className="absolute top-0 left-0 w-full z-50 px-6 py-8 flex flex-col md:flex-row justify-between items-center text-white gap-6">
+        /* 
+          1. Abbiamo cambiato py-8 in py-4 md:py-8 per ridurre l'altezza complessiva su mobile.
+          2. Abbiamo rimosso gap-6 e usato gap-3 per mobile.
+        */
+        <nav className="absolute top-0 left-0 w-full z-50 px-6 py-4 md:py-8 flex flex-col md:flex-row justify-between items-center text-white gap-3 md:gap-6">
             {/* Logo */}
-            <div className="relative h-10 md:h-12 w-auto shrink-0">
+            <div className="relative h-8 md:h-12 w-auto shrink-0">
                 <Link href={getLocalizedHref('/')} className="block relative w-full h-full">
                     <Image
                         src="/assets/images/logo.png"
@@ -71,8 +75,8 @@ export default function MainMenu({ lang = 'it' }: { lang?: string }) {
                 <li><Link href={getLocalizedHref('/recensioni')} className="hover:text-blue-400 transition-colors">{labels.reviews}</Link></li>
             </ul>
 
-            {/* Selettore Lingue */}
-            <div className="flex gap-3 text-[10px] uppercase tracking-[0.2em] opacity-60">
+            {/* Selettore Lingue - Ridotto il tracking su mobile per non allargarlo troppo */}
+            <div className="flex gap-3 text-[10px] uppercase tracking-widest md:tracking-[0.2em] opacity-60">
                 {['it', 'en', 'es'].map((l) => (
                     <Link 
                         key={l} 

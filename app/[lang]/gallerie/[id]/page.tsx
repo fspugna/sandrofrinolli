@@ -34,7 +34,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 // 2. IL TUO COMPONENTE PAGINA ORIGINALE (Resta invariato)
 export default async function GalleriaPage({ params }: Props) {
     const { id, lang } = await params;
-    
+
     // 1. Esegui la query QUI (Server Side)
     const galleria = await client.fetch(`
         *[_type == "galleria" && _id == $id][0] {
@@ -54,24 +54,37 @@ export default async function GalleriaPage({ params }: Props) {
     return (
         <main className="bg-[#1c1d26] min-h-screen text-white">
             <Header />
-            <section className="max-w-7xl mx-auto px-6 py-16">                
-                
-                {/* Il titolo della galleria sale morbidamente all'avvio della pagina */}
-                <FadeUp>
-                    <h1 className="text-4xl md:text-5xl font-serif mb-6">{galleria.nome}</h1>
-                </FadeUp>
+            <section className="max-w-7xl mx-auto px-6 py-16">
 
-                {/* La griglia delle opere d'arte entra subito dopo con un leggero delay */}
-                <FadeUp delay={0.25}>
-                    <GalleriaView galleria={galleria} />
-                </FadeUp>
+                {/* Griglia a due colonne asimmetriche su desktop */}
+                <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 lg:gap-12">
 
-                {/* Le altre gallerie consigliate compaiono quando l'utente scende con la pagina */}
-                <FadeUp delay={0.4} className="mt-12">
-                    <AltreGallerie currentId={id} lang={lang} />
-                </FadeUp>
-                
-            </section>            
+                    {/* Colonna principale (Galleria e Opere) */}
+                    <div className="lg:col-span-3">
+                        {/* Il titolo della galleria sale morbidamente all'avvio della pagina */}
+                        <FadeUp>
+                            <h1 className="text-4xl md:text-5xl font-serif mb-6">{galleria.nome}</h1>
+                        </FadeUp>
+
+                        {/* La griglia delle opere d'arte entra subito dopo con un leggero delay */}
+                        <FadeUp delay={0.25}>
+                            <GalleriaView galleria={galleria} />
+                        </FadeUp>
+                    </div>
+
+                    {/* Barra laterale (Altre Gallerie) */}
+                    <div className="lg:col-span-1">
+                        {/* sticky e top-24 mantengono la barra laterale visibile durante lo scroll se la galleria è molto lunga */}
+                        <div className="lg:sticky lg:top-24">
+                            <FadeUp delay={0.4}>
+                                <AltreGallerie currentId={id} lang={lang} />
+                            </FadeUp>
+                        </div>
+                    </div>
+
+                </div>
+
+            </section>
         </main>
     );
 }
