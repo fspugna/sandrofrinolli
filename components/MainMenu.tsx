@@ -7,27 +7,33 @@ const supportedLanguages = ['it', 'en', 'es'] as const
 const menuLabels = {
     it: {
         home: 'Home',
+        about: 'Chi è',
         galleries: 'Gallerie',
         videos: 'Video',
         exhibitions: 'Esposizioni',
         news: 'Notizie',
         reviews: 'Recensioni',
+        contatti: 'Contatti',
     },
     en: {
         home: 'Home',
+        about: 'Who is',
         galleries: 'Galleries',
         videos: 'Videos',
         exhibitions: 'Exhibitions',
         news: 'News',
         reviews: 'Reviews',
+        contatti: 'Contacts',
     },
     es: {
         home: 'Inicio',
+        about: 'Quién es',
         galleries: 'Galerias',
         videos: 'Videos',
         exhibitions: 'Exposiciones',
         news: 'Noticias',
         reviews: 'Reseñas',
+        contatti: 'Contacto',
     },
 } as const
 
@@ -68,11 +74,13 @@ export default function MainMenu({ lang = 'it' }: { lang?: string }) {
             {/* Menu */}
             <ul className="hidden md:flex flex-wrap justify-center gap-x-6 gap-y-2 text-[11px] uppercase tracking-widest opacity-80 text-center">
                 <li><Link href={getLocalizedHref('/')} className="hover:text-blue-400 transition-colors">{labels.home}</Link></li>
+                <li><Link href={getLocalizedHref('/about')} className="hover:text-blue-400 transition-colors">{labels.about}</Link></li>
                 <li><Link href={getLocalizedHref('/gallerie')} className="hover:text-blue-400 transition-colors">{labels.galleries}</Link></li>
                 <li><Link href={getLocalizedHref('/video')} className="hover:text-blue-400 transition-colors">{labels.videos}</Link></li>
                 <li><Link href={getLocalizedHref('/esposizioni')} className="hover:text-blue-400 transition-colors">{labels.exhibitions}</Link></li>
                 <li><Link href={getLocalizedHref('/notizie')} className="hover:text-blue-400 transition-colors">{labels.news}</Link></li>
                 <li><Link href={getLocalizedHref('/recensioni')} className="hover:text-blue-400 transition-colors">{labels.reviews}</Link></li>
+                <li><Link href={getLocalizedHref('/contatti')} className="hover:text-blue-400 transition-colors">{labels.contatti}</Link></li>
             </ul>
 
             {/* Selettore Lingue - Ridotto il tracking su mobile per non allargarlo troppo */}

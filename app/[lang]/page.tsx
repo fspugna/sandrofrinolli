@@ -1,3 +1,4 @@
+import AboutView from '@/components/AboutView'
 import { FadeIn, FadeUp } from '@/components/Animate'
 import HeroBackground from '@/components/HeroBackground'
 import MainMenu from '@/components/MainMenu'
@@ -5,79 +6,10 @@ import ScrollToTop from '@/components/ScrollToTop'
 import { getPrimaryImage, getYouTubeId } from '@/lib/utils'
 import { client } from '@/sanity/lib/client'
 import { urlFor } from '@/sanity/lib/image'
-import { Esposizione, Galleria, HomeData, Notizia, Recensione, SocialItem, Video } from '@/types'
+import { Esposizione, Galleria, HomeData, labelsTranslations, Notizia, Recensione, SocialItem, Video } from '@/types'
 import { PortableText } from '@portabletext/react'
 import Image from 'next/image'
 import Link from 'next/link'
-
-const homeTranslations = {
-  it: {
-    heroLine1: 'La sintesi di una riflessione,',
-    heroLine2: "la narrazione di un'esperienza.",
-    artistLabel: "L'Artista",
-    galleries: 'Gallerie',
-    artworkAlt: "Opera d'arte",
-    videos: 'Video',
-    viewAllVideos: 'Vedi tutti i video',
-    imageFallbackAlt: 'Immagine del contenuto',
-    exhibitions: 'Esposizioni',
-    viewAllExhibitions: 'Vedi tutte le esposizioni',
-    latestNews: 'Ultime Notizie',
-    viewAllNews: 'Vedi tutte le notizie',
-    reviews: 'Recensioni',
-    readFullReview: 'Leggi lo scritto completo',
-    viewAllReviews: 'Vedi tutte le recensioni',
-    contacts: 'Contatti',
-    contactDetails: 'Recapiti',
-    phone: 'Tel:',
-    email: 'Email:',
-    socialNetworks: 'Social Network',
-  },
-  en: {
-    heroLine1: 'The synthesis of a reflection,',
-    heroLine2: 'the narration of an experience.',
-    artistLabel: 'The Artist',
-    galleries: 'Galleries',
-    artworkAlt: 'Artwork',
-    videos: 'Videos',
-    viewAllVideos: 'See all videos',
-    imageFallbackAlt: 'Content image',
-    exhibitions: 'Exhibitions',
-    viewAllExhibitions: 'See all exhibitions',
-    latestNews: 'Latest News',
-    viewAllNews: 'See all news',
-    reviews: 'Reviews',
-    readFullReview: 'Read the full text',
-    viewAllReviews: 'See all reviews',
-    contacts: 'Contacts',
-    contactDetails: 'Contact Details',
-    phone: 'Phone:',
-    email: 'Email:',
-    socialNetworks: 'Social Networks',
-  },
-  es: {
-    heroLine1: 'La sintesis de una reflexion,',
-    heroLine2: 'la narracion de una experiencia.',
-    artistLabel: 'El Artista',
-    galleries: 'Galerias',
-    artworkAlt: 'Obra de arte',
-    videos: 'Videos',
-    viewAllVideos: 'Ver todos los videos',
-    imageFallbackAlt: 'Imagen del contenido',
-    exhibitions: 'Exposiciones',
-    viewAllExhibitions: 'Ver todas las exposiciones',
-    latestNews: 'Ultimas Noticias',
-    viewAllNews: 'Ver todas las noticias',
-    reviews: 'Resenas',
-    readFullReview: 'Leer el texto completo',
-    viewAllReviews: 'Ver todas las resenas',
-    contacts: 'Contactos',
-    contactDetails: 'Datos de contacto',
-    phone: 'Tel:',
-    email: 'Email:',
-    socialNetworks: 'Redes Sociales',
-  },
-} as const
 
 const dateLocales = {
   it: 'it-IT',
@@ -145,7 +77,7 @@ async function getHomeData(lang: string): Promise<HomeData> {
 export default async function Home({ params }: { params: Promise<{ lang: string }> }) {
   const { lang } = await params;
   const data = await getHomeData(lang);
-  const t = homeTranslations[lang as keyof typeof homeTranslations] || homeTranslations.it;
+  const t = labelsTranslations[lang as keyof typeof labelsTranslations] || labelsTranslations.it;
   const dateLocale = dateLocales[lang as keyof typeof dateLocales] || dateLocales.it;
 
   // Filtriamo all'origine eventuali gallerie strutturate nel database ma prive di opere effettive,
@@ -177,49 +109,7 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
         </section>
 
         {/* 2. CHI È - Rimossa la card rigida dal testo per farlo fluttuare sul vetro sfocato */}
-        {data.about && (
-          <section id="chi-è" className="relative py-28 px-6 border-y border-white/5 overflow-hidden min-h-[600px] flex items-center">
-            {data.about?.sfondo && (
-              <>
-                <div
-                  className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
-                  style={{
-                    backgroundImage: `url(${urlFor(data.about.sfondo).url()})`,
-                    backgroundAttachment: 'fixed',
-                    maskImage: 'linear-gradient(to bottom, transparent, black 15%, black 85%, transparent)',
-                    WebkitMaskImage: 'linear-gradient(to bottom, transparent, black 15%, black 85%, transparent)'
-                  }}
-                />
-                <div className="absolute inset-0 bg-[#1c1d26]/85 backdrop-blur-xs z-0 pointer-events-none" />
-              </>
-            )}
-
-            <div className="relative z-10 max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center w-full">
-              {/* Foto dell'artista: Integrazione cromatica soft (Effetto Grayscale raffinato) */}
-              <div className="relative aspect-[4/5] w-full shadow-2xl rounded-lg overflow-hidden border border-white/10 bg-black/20 group">
-                <FadeIn>
-                  <Image
-                    src={urlFor(data.about.foto).url()}
-                    alt="Sandro Frinolli Puzzilli"
-                    fill
-                    className="object-cover grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-1000 ease-out"
-                  />
-                </FadeIn>
-              </div>
-
-              {/* Testo Biografia pulito e fluttuante */}
-              <div className="space-y-6 flex flex-col justify-center">
-                <FadeUp delay={0.2} className="space-y-6">
-                  <h2 className="text-sm uppercase tracking-[0.4em] opacity-40 italic text-blue-400">{t.artistLabel}</h2>
-                  <h3 className="text-4xl font-serif tracking-wide text-white/95">{data.about.titolo || "Sandro Frinolli Puzzilli"}</h3>
-                  <div className="text-white/80 leading-relaxed font-light text-lg space-y-4">
-                    <PortableText value={data.about?.biografia} />
-                  </div>
-                </FadeUp>
-              </div>
-            </div>
-          </section>
-        )}
+        <AboutView aboutData={data.about} lang={lang} />        
 
         {/* 3. GALLERIA - Layout dinamico e bilanciato che evita buchi vuoti */}
         <section id="galleria" className="py-28 px-6">

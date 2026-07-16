@@ -94,7 +94,7 @@ export interface LocalizedContentTranslation {
     contenuto?: PortableContentBlock[];
 }
 
-export interface Video {  
+export interface Video {
     _id: string;
     titolo: string;
     data?: string;
@@ -111,3 +111,72 @@ export interface HomeData {
     recensioni: Recensione[];
     contatti: Contatti;
 }
+
+export const labelsTranslations = {
+    it: {
+        heroLine1: 'La sintesi di una riflessione,',
+        heroLine2: "la narrazione di un'esperienza.",
+        artistLabel: "L'Artista",
+        galleries: 'Gallerie',
+        artworkAlt: "Opera d'arte",
+        videos: 'Video',
+        viewAllVideos: 'Vedi tutti i video',
+        imageFallbackAlt: 'Immagine del contenuto',
+        exhibitions: 'Esposizioni',
+        viewAllExhibitions: 'Vedi tutte le esposizioni',
+        latestNews: 'Ultime Notizie',
+        viewAllNews: 'Vedi tutte le notizie',
+        reviews: 'Recensioni',
+        readFullReview: 'Leggi lo scritto completo',
+        viewAllReviews: 'Vedi tutte le recensioni',
+        contacts: 'Contatti',
+        contactDetails: 'Recapiti',
+        phone: 'Tel:',
+        email: 'Email:',
+        socialNetworks: 'Social Network',
+    },
+    en: {
+        heroLine1: 'The synthesis of a reflection,',
+        heroLine2: 'the narration of an experience.',
+        artistLabel: 'The Artist',
+        galleries: 'Galleries',
+        artworkAlt: 'Artwork',
+        videos: 'Videos',
+        viewAllVideos: 'See all videos',
+        imageFallbackAlt: 'Content image',
+        exhibitions: 'Exhibitions',
+        viewAllExhibitions: 'See all exhibitions',
+        latestNews: 'Latest News',
+        viewAllNews: 'See all news',
+        reviews: 'Reviews',
+        readFullReview: 'Read the full text',
+        viewAllReviews: 'See all reviews',
+        contacts: 'Contacts',
+        contactDetails: 'Contact Details',
+        phone: 'Phone:',
+        email: 'Email:',
+        socialNetworks: 'Social Networks',
+    },
+    es: {
+        heroLine1: 'La sintesis de una reflexion,',
+        heroLine2: 'la narracion de una experiencia.',
+        artistLabel: 'El Artista',
+        galleries: 'Galerias',
+        artworkAlt: 'Obra de arte',
+        videos: 'Videos',
+        viewAllVideos: 'Ver todos los videos',
+        imageFallbackAlt: 'Imagen del contenido',
+        exhibitions: 'Exposiciones',
+        viewAllExhibitions: 'Ver todas las exposiciones',
+        latestNews: 'Ultimas Noticias',
+        viewAllNews: 'Ver todas las noticias',
+        reviews: 'Resenas',
+        readFullReview: 'Leer el texto completo',
+        viewAllReviews: 'Ver todas las resenas',
+        contacts: 'Contactos',
+        contactDetails: 'Datos de contacto',
+        phone: 'Tel:',
+        email: 'Email:',
+        socialNetworks: 'Redes Sociales',
+    },
+} as const
