@@ -71,14 +71,15 @@ export default function EsposizioniList({ initialEsposizioni, currentPage, total
                                     href={`/${lang}/esposizioni/${e._id}`} 
                                     className="group flex flex-col h-full bg-[#272833] rounded-2xl overflow-hidden hover:ring-2 hover:ring-blue-500/50 transition-all duration-300"
                                 >
-                                    <div className="h-60 w-full overflow-hidden bg-gray-800">
+                                    <div className="relative h-60 w-full overflow-hidden bg-gray-800">
                                         {coverImage ? (
                                             <Image
                                                 src={urlFor(coverImage).url()}
                                                 alt={e.titolo || "Immagine esposizione"}
-                                                width={400}
-                                                height={240}
-                                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                                fill
+                                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"                                                
+                                                loading="eager"
                                             />
                                         ) : (
                                             <div className="w-full h-full flex items-center justify-center opacity-20">

@@ -41,6 +41,7 @@ export default async function AltriVideo({ currentId, lang }: { currentId: strin
                                         src={thumbnail}
                                         alt={v.titolo}
                                         fill
+                                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                                         className="object-cover w-full h-full opacity-70 group-hover:opacity-100 transition-opacity"
                                     />
                                 ) : (

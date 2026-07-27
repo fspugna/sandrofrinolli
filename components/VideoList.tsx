@@ -83,6 +83,7 @@ export default function VideoList({ initialVideos, currentPage, totalPages, lang
                                                 src={thumbnail}
                                                 alt={v.titolo}
                                                 fill
+                                                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                                                 className="object-cover w-full h-full opacity-70 group-hover:opacity-100 transition-all duration-700 group-hover:scale-105"
                                             />
                                         ) : (

@@ -147,8 +147,8 @@ export default async function EsposizionePage({ params }: { params: Promise<{ id
                                                         src={urlFor(image).url()}
                                                         alt={e.titolo}
                                                         fill
-                                                        className="object-cover transition-transform duration-700 group-hover:scale-105"
-                                                        sizes="96px"
+                                                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                                                        className="object-cover transition-transform duration-700 group-hover:scale-105"                                                        
                                                     />
                                                 </div>
                                             ) : null

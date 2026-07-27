@@ -134,8 +134,8 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
                       src={urlFor(galleria.opere[0].immagine).url()}
                       alt={galleria.opere[0].titolo || t.artworkAlt}
                       fill
-                      className="object-cover transition duration-1000 ease-out group-hover:scale-103"
-                      sizes="(max-width: 768px) 100vw, 50vw"
+                      className="object-cover transition duration-1000 ease-out group-hover:scale-103"                      
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     />
                     <div className="absolute inset-0 bg-black/15 group-hover:bg-black/0 transition-colors duration-500" />
                   </div>
@@ -204,7 +204,7 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
                               alt={e.titolo || t.imageFallbackAlt}
                               fill
                               className="object-cover transition-transform duration-700 group-hover:scale-105"
-                              sizes="96px"
+                              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                             />
                           </div>
                         ) : null
@@ -248,7 +248,7 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
                               alt={n.titolo || t.imageFallbackAlt}
                               fill
                               className="object-cover transition-transform duration-700 group-hover:scale-105"
-                              sizes="96px"
+                              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                             />
                           </div>
                         ) : null
@@ -299,7 +299,7 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
                             alt={r.titolo || t.imageFallbackAlt}
                             fill
                             className="object-cover transition-transform duration-700 group-hover:scale-105"
-                            sizes="96px"
+                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                           />
                         </div>
                       ) : null
@@ -388,6 +388,7 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
                   alt="Sandro Frinolli Puzzilli"
                   fill
                   className="object-cover transition-all duration-1000 ease-in-out grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-102"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                 />
               </FadeIn>
             </div>

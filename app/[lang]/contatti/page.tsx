@@ -76,6 +76,7 @@ export default async function AboutPage({ params }: { params: Promise<{ lang: st
                                 src={contattiData.fotoUrl}
                                 alt="Sandro Frinolli Puzzilli"
                                 fill
+                                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                                 className="object-cover transition-all duration-1000 ease-in-out grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-102"
                             />
                         </FadeIn>

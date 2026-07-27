@@ -8,7 +8,7 @@ import { PortableText } from "next-sanity";
 
 interface AboutProps {
     aboutData: About;
-    lang: string;    
+    lang: string;
 }
 
 export default function AboutView({ aboutData, lang }: AboutProps) {
@@ -34,20 +34,22 @@ export default function AboutView({ aboutData, lang }: AboutProps) {
                         </>
                     )}
 
-                    <div className="relative z-10 max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center w-full">
-                        {/* Foto dell'artista: Integrazione cromatica soft (Effetto Grayscale raffinato) */}
-                        <div className="relative aspect-[4/5] w-full shadow-2xl rounded-lg overflow-hidden border border-white/10 bg-black/20 group">
-                            <FadeIn>
+                    {/* Aggiunto px-6 md:px-8 e regolato il gap mobile */}
+                    <div className="relative z-10 max-w-6xl mx-auto px-6 md:px-8 grid md:grid-cols-2 gap-12 md:gap-16 items-center w-full">
+                        {/* Foto dell'artista */}
+                        <FadeIn>
+                            <div className="relative aspect-[4/5] w-full shadow-2xl rounded-lg overflow-hidden border border-white/10 bg-black/20 group">
                                 <Image
                                     src={urlFor(aboutData.foto).url()}
                                     alt="Sandro Frinolli Puzzilli"
                                     fill
+                                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                                     className="object-cover grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-1000 ease-out"
                                 />
-                            </FadeIn>
-                        </div>
+                            </div>
+                        </FadeIn>
 
-                        {/* Testo Biografia pulito e fluttuante */}
+                        {/* Testo Biografia */}
                         <div className="space-y-6 flex flex-col justify-center">
                             <FadeUp delay={0.2} className="space-y-6">
                                 <h2 className="text-sm uppercase tracking-[0.4em] opacity-40 italic text-blue-400">{t.artistLabel}</h2>

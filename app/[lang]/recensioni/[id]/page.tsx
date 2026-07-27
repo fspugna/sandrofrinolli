@@ -149,7 +149,7 @@ export default async function RecensionePage({ params }: { params: Promise<{ id:
                                                         alt={r.titolo}
                                                         fill
                                                         className="object-cover transition-transform duration-700 group-hover:scale-105"
-                                                        sizes="96px"
+                                                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                                                     />
                                                 </div>
                                             ) : null
