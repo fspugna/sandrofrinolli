@@ -17,6 +17,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     // Esegui la stessa identica query (Next.js fa il caching automatico del fetch)
     const galleria = await client.fetch(`
         *[_type == "galleria" && _id == $id][0] {
+            _id,
             "nome": coalesce(traduzioni[language == $lang][0].nome, traduzioni[0].nome, nome)
         }
     `, { id, lang });
@@ -38,6 +39,7 @@ export default async function GalleriaPage({ params }: Props) {
     // 1. Esegui la query QUI (Server Side)
     const galleria = await client.fetch(`
         *[_type == "galleria" && _id == $id][0] {
+            _id,
             "nome": coalesce(traduzioni[language == $lang][0].nome, traduzioni[0].nome, nome),
             "opere": opere[]->{
                 _id,

@@ -69,11 +69,21 @@ export interface Recensione {
     contenuto: PortableContentBlock[];
 }
 
+export interface SanityAudioFile {
+    asset?: {
+        _ref?: string;
+        _type?: string;
+        url?: string; // Presente se risolto con GROQ asset->url
+    };
+    titolo?: string;
+}
+
 export interface Opera {
     _id: string;
     titolo: string;
     immagine: SanityImage;
     descrizione: string;
+    audio?: SanityAudioFile; // Campo audio come definito nello schema Sanity
 }
 
 export interface Galleria {

@@ -1,7 +1,7 @@
 'use client';
-import { urlFor } from '@/sanity/lib/image';
 import { getPrimaryImage } from '@/lib/utils';
-import { Esposizione, SanityImage } from '@/types';
+import { urlFor } from '@/sanity/lib/image';
+import { Esposizione } from '@/types';
 import { motion, Variants } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';

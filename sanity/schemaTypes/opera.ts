@@ -11,6 +11,22 @@ export const opera = defineType({
             type: 'image', // Carichi l'immagine una sola volta qui
         }),
         defineField({
+            name: 'audio',
+            title: 'Traccia Audio / Commento Sonoro',
+            type: 'file',
+            options: {
+                accept: 'audio/*', // Accetta solo file audio (mp3, wav, m4a, ecc.)
+            },
+            fields: [
+                defineField({
+                    name: 'titolo',
+                    type: 'string',
+                    title: 'Titolo o etichetta audio (opzionale)',
+                    description: 'Es. "Guida all\'ascolto" o "Traccia d\'ambiente"',
+                }),
+            ],
+        }),
+        defineField({
             name: 'traduzioni',
             title: 'Traduzioni',
             type: 'array',
