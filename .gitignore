@@ -19,6 +19,7 @@
 
 # Sanity CLI generated runtime
 /.sanity/
+/dist/
 
 # production
 /build
