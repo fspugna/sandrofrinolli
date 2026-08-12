@@ -1,4 +1,5 @@
 import { defineConfig } from 'sanity'
+import {itITLocale} from '@sanity/locale-it-it'
 import { structureTool } from 'sanity/structure'
 import { schemaTypes } from './sanity/schemaTypes'
 import {structure} from './sanity/structure'
@@ -8,7 +9,7 @@ export default defineConfig({
     title: 'Sandro Frinolli Portfolio',
     projectId: 'vci8k9tk',
     dataset: 'production',
-    plugins: [structureTool({structure})],
+    plugins: [structureTool({structure}), itITLocale()],
     document: {
         newDocumentOptions: (previous) => previous.filter((item) => item.templateId !== 'about'),
         actions: (previous, context) => context.schemaType === 'about'
