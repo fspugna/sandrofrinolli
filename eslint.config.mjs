@@ -11,6 +11,7 @@ const eslintConfig = defineConfig([
     ".next/**",
     "out/**",
     "build/**",
+    "dist/**",
     "next-env.d.ts",
     // Raw legacy sources and generated migration artifacts are input data,
     // not application code maintained by this project.

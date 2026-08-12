@@ -23,25 +23,25 @@ async function getHomeData(lang: string): Promise<HomeData> {
     "header": *[_type == "header"][0]{
       fotoHeader
     },
-    "about": *[_type == "about" && language == "${lang}"][0]{
-      titolo,
-      biografia,
+    "about": *[_id == "about"][0]{
+      "titolo": coalesce(traduzioni[language == $lang][0].titolo, traduzioni[language == "it"][0].titolo),
+      "biografia": coalesce(traduzioni[language == $lang][0].biografia, traduzioni[language == "it"][0].biografia),
       foto,
       sfondo
     },
     "gallerie": *[_type == "galleria"]{
       _id,    
-      "nome": traduzioni[language == "${lang}"][0].nome,
+      "nome": traduzioni[language == $lang][0].nome,
       "opere": opere[]->{
         _id,        
-        "titolo": traduzioni[language == "${lang}"][0].titolo,
-        "descrizione": traduzioni[language == "${lang}"][0].descrizione,
+        "titolo": traduzioni[language == $lang][0].titolo,
+        "descrizione": traduzioni[language == $lang][0].descrizione,
         immagine
       }
     },
     "video": *[_type == "video"] | order(data desc)[0] {
       _id,
-      "titolo": coalesce(traduzioni[language == "${lang}"][0].titolo, traduzioni[0].titolo),
+      "titolo": coalesce(traduzioni[language == $lang][0].titolo, traduzioni[0].titolo),
       data,
       url
     },
@@ -50,21 +50,21 @@ async function getHomeData(lang: string): Promise<HomeData> {
       data,
       immagini,
       contenuto,
-      "titolo": coalesce(traduzioni[language == "${lang}"][0].titolo, traduzioni[0].titolo, titolo)
+      "titolo": coalesce(traduzioni[language == $lang][0].titolo, traduzioni[0].titolo, titolo)
     },
     "notizie": *[_type == "notizia"] | order(data desc)[0..3]{
       _id,
       data,
       immagini,
       contenuto,
-      "titolo": coalesce(traduzioni[language == "${lang}"][0].titolo, traduzioni[0].titolo, titolo)
+      "titolo": coalesce(traduzioni[language == $lang][0].titolo, traduzioni[0].titolo, titolo)
     },
     "recensioni": *[_type == "recensione"] | order(data desc)[0..3]{
       _id,
       data,
       immagini,
       contenuto,
-      "titolo": coalesce(traduzioni[language == "${lang}"][0].titolo, traduzioni[0].titolo, titolo)
+      "titolo": coalesce(traduzioni[language == $lang][0].titolo, traduzioni[0].titolo, titolo)
     },
     "contatti": *[_type == "contatti"][0]{
       telefono,
@@ -72,7 +72,7 @@ async function getHomeData(lang: string): Promise<HomeData> {
       "fotoUrl": foto.asset->url,
       social
     }
-  }`)
+  }`, {lang})
 }
 
 export default async function Home({ params }: { params: Promise<{ lang: string }> }) {
