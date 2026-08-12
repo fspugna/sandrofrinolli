@@ -2,13 +2,7 @@ import { client } from '@/sanity/lib/client';
 import { Video } from '@/types';
 import Image from 'next/image';
 import Link from 'next/link';
-
-// Helper per miniatura YouTube (estrae correttamente l'ID)
-const getYouTubeThumbnail = (url: string) => {
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-    const match = url.match(regExp);
-    return match ? `https://img.youtube.com/vi/${match[2]}/mqdefault.jpg` : null;
-};
+import { getYouTubeThumbnail } from '@/lib/video';
 
 export default async function AltriVideo({ currentId, lang }: { currentId: string; lang: string }) {
     const altriVideo = await client.fetch(`

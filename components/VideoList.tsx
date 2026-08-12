@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { Header } from './Header';
 import Image from 'next/image';
 import { Footer } from './Footer';
+import { getYouTubeThumbnail } from '@/lib/video';
 // 👇 IMPORTA MOTION E LE VARIANTI DEI TIPI
 import { motion, Variants } from 'framer-motion';
 
@@ -29,13 +30,6 @@ const itemVariants: Variants = {
             ease: [0.21, 0.47, 0.32, 0.98] // Curva premium fluida ed elegante
         }
     },
-};
-
-// Helper per estrarre l'ID di YouTube dall'URL
-const getYouTubeThumbnail = (url: string) => {  
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-    const match = url.match(regExp);
-    return match ? `https://img.youtube.com/vi/${match[2]}/mqdefault.jpg` : null;
 };
 
 interface VideoListProps {

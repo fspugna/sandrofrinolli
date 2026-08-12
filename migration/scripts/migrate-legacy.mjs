@@ -19,6 +19,8 @@ const token = process.env.SANITY_API_WRITE_TOKEN
 const command = process.argv[2] || 'analyze'
 const execute = process.argv.includes('--execute')
 const confirmation = process.argv.find((arg) => arg.startsWith('--confirm='))?.slice(10)
+const videoOnly = command === 'videos-analyze' || command === 'videos-migrate'
+const migrationTargetTypes = videoOnly ? ['video'] : [...targetTypes, 'video']
 
 const languages = [
   {language: 'it', title: 'TITOLO', body: 'TESTO'},
@@ -133,6 +135,15 @@ function maybeDecodeBase64(value) {
   }
 }
 
+function decodeLegacyBase64(value) {
+  if (typeof value !== 'string') return value
+  const compact = value.trim().replace(/\s+/g, '')
+  if (!compact.length || compact.length % 4 || !/^[A-Za-z0-9+/]+={0,2}$/.test(compact)) return value
+  const buffer = Buffer.from(compact, 'base64')
+  const utf8 = buffer.toString('utf8')
+  return utf8.includes('\uFFFD') ? buffer.toString('latin1') : utf8
+}
+
 const entityDecoderDom = new JSDOM('<!doctype html><textarea></textarea>')
 const entityDecoder = entityDecoderDom.window.document.querySelector('textarea')
 
@@ -162,6 +173,14 @@ function cleanUrl(value) {
   } catch {
     return null
   }
+}
+
+function extractVideoUrl(value) {
+  const raw = decodeEntities(value)
+  const dom = new JSDOM(`<body>${raw}</body>`)
+  const iframeUrl = dom.window.document.querySelector('iframe')?.getAttribute('src')
+  dom.window.close()
+  return cleanUrl(iframeUrl || raw)
 }
 
 function htmlToPortableText(value, context) {
@@ -303,6 +322,20 @@ async function buildMigration() {
     return key
   }
   const documents = []
+  for (const row of tables.get('tb_video') || []) {
+    const url = extractVideoUrl(row.VIDEO_URL)
+    if (!url) throw new Error(`URL video non valido per tb_video.id_video=${row.id_video}`)
+    documents.push({
+      _id: documentId('video', row.id_video), _type: 'video', legacyId: Number(row.id_video),
+      data: row.DATA_INS, url, inEvidenza: Number(row.IN_EVIDENZA) === 1,
+      traduzioni: [
+        {_type: 'object', _key: 'it', language: 'it', titolo: plainText(decodeLegacyBase64(row.TITOLO_ITA))},
+        {_type: 'object', _key: 'en', language: 'en', titolo: plainText(decodeLegacyBase64(row.TITOLO_ENG))},
+        {_type: 'object', _key: 'es', language: 'es', titolo: plainText(decodeLegacyBase64(row.TITOLO_ESP))},
+      ],
+    })
+  }
+  if (videoOnly) return {tables, documents, assetSources, missingAssets}
   const ordinaryGalleries = galleries.filter((row) => Number(row.ESPOSIZIONE) === 0)
   for (const gallery of ordinaryGalleries) {
     const galleryWorks = workByGallery.get(String(gallery.ID_GALLERIA)) || []
@@ -376,7 +409,7 @@ async function cleanup(client) {
   // raw document set so both published IDs and drafts.* IDs enter the mutation.
   const existing = await client.fetch(
     '*[_type in $types]',
-    {types: targetTypes},
+    {types: migrationTargetTypes},
     {perspective: 'raw'},
   )
   const existingIds = new Set(existing.map((doc) => doc._id))
@@ -456,7 +489,7 @@ async function importDocuments(client, documents, assets) {
   for (let offset = 0; offset < ready.length; offset += 50) {
     let transaction = client.transaction()
     ready.slice(offset, offset + 50).forEach((doc) => { transaction = transaction.createOrReplace(doc) })
-    await transaction.commit({visibility: 'deferred'})
+    await transaction.commit({visibility: videoOnly ? 'sync' : 'deferred'})
   }
 }
 
@@ -478,27 +511,28 @@ async function writeReport(migration) {
     remoteAssetsToDownload: [...migration.assetSources.values()].filter((asset) => asset.url).map((asset) => asset.url),
     missingAssets: [...migration.missingAssets],
   }
-  await writeFile(join(reportsDir, 'analysis.json'), `${JSON.stringify(report, null, 2)}\n`)
+  const suffix = videoOnly ? '-videos' : ''
+  await writeFile(join(reportsDir, `analysis${suffix}.json`), `${JSON.stringify(report, null, 2)}\n`)
   const preview = migration.documents.map((source) => {
     const doc = {...source}
     delete doc._assetKey
     delete doc._assetKeys
     return doc
   })
-  await writeFile(join(transformedDir, 'preview.ndjson'), `${preview.map((doc) => JSON.stringify(doc)).join('\n')}\n`)
+  await writeFile(join(transformedDir, `preview${suffix}.ndjson`), `${preview.map((doc) => JSON.stringify(doc)).join('\n')}\n`)
   return report
 }
 
 async function main() {
-  if (!['analyze', 'cleanup', 'migrate'].includes(command)) throw new Error(`Comando non valido: ${command}`)
+  if (!['analyze', 'cleanup', 'migrate', 'videos-analyze', 'videos-migrate'].includes(command)) throw new Error(`Comando non valido: ${command}`)
   const migration = await buildMigration()
   const report = await writeReport(migration)
   console.log(JSON.stringify(report, null, 2))
-  if (command === 'analyze' || !execute) {
-    if (command !== 'analyze') console.log('Dry-run: nessuna modifica a Sanity. Aggiungi --execute e la conferma richiesta.')
+  if (command === 'analyze' || command === 'videos-analyze' || !execute) {
+    if (!command.endsWith('analyze')) console.log('Dry-run: nessuna modifica a Sanity. Aggiungi --execute e la conferma richiesta.')
     return
   }
-  const expected = command === 'cleanup' ? 'DELETE_PRODUCTION_CONTENT' : 'MIGRATE_PRODUCTION_CONTENT'
+  const expected = command === 'cleanup' ? 'DELETE_PRODUCTION_CONTENT' : videoOnly ? 'MIGRATE_PRODUCTION_VIDEOS' : 'MIGRATE_PRODUCTION_CONTENT'
   if (confirmation !== expected) throw new Error(`Conferma mancante: usa --confirm=${expected}`)
   const client = clientForWrite()
   const removed = await cleanup(client)
@@ -508,6 +542,13 @@ async function main() {
   await writeFile(join(reportsDir, 'asset-download-failures.json'), `${JSON.stringify(failures, null, 2)}\n`)
   await importDocuments(client, migration.documents, assets)
   console.log(`Migrazione completata: ${migration.documents.length} documenti e ${assets.size} asset caricati. Download falliti: ${failures.length}.`)
+  if (videoOnly) {
+    const expectedIds = migration.documents.map((doc) => doc._id)
+    const importedIds = await client.fetch('*[_type == "video" && _id in $ids]._id', {ids: expectedIds}, {perspective: 'published'})
+    const missingIds = expectedIds.filter((id) => !importedIds.includes(id))
+    if (missingIds.length) throw new Error(`Validazione post-import fallita; video mancanti: ${missingIds.join(', ')}`)
+    console.log(`Validazione completata: ${importedIds.length}/${expectedIds.length} video pubblicati presenti.`)
+  }
 }
 
 main().catch((error) => {

@@ -1,4 +1,4 @@
-import { defineField, defineType } from 'sanity'
+import {defineArrayMember, defineField, defineType} from 'sanity'
 
 export const video = defineType({
     name: 'video',
@@ -9,10 +9,10 @@ export const video = defineType({
             name: 'traduzioni',
             title: 'Traduzioni',
             type: 'array',
-            of: [{
+            of: [defineArrayMember({
                 type: 'object',
                 fields: [
-                    {
+                    defineField({
                         name: 'language',
                         title: 'Lingua',
                         type: 'string',
@@ -22,19 +22,24 @@ export const video = defineType({
                                 { title: 'English', value: 'en' },
                                 { title: 'Español', value: 'es' }
                             ],
-                        }
-                    },
-                    { name: 'titolo', type: 'string', title: 'Titolo' }
+                        },
+                        validation: (rule) => rule.required(),
+                    }),
+                    defineField({name: 'titolo', type: 'string', title: 'Titolo', validation: (rule) => rule.required()})
                 ]
-            }]
+            })],
+            validation: (rule) => rule.required().min(1),
         }),
-        defineField({ name: 'data', type: 'date' }),
+        defineField({name: 'data', type: 'date', validation: (rule) => rule.required()}),
         defineField({
             name: 'url',
-            title: 'URL YouTube',
+            title: 'URL video',
             type: 'url',
-            description: 'Inserisci il link del video (es. https://www.youtube.com/watch?v=...)'
+            description: 'Link YouTube, Facebook o alla pagina esterna del video.',
+            validation: (rule) => rule.required().uri({scheme: ['http', 'https']}),
         }),
+        defineField({name: 'inEvidenza', title: 'In evidenza', type: 'boolean', initialValue: false}),
+        defineField({name: 'legacyId', title: 'ID archivio storico', type: 'number', readOnly: true, hidden: ({value}) => value === undefined}),
     ],
     preview: {
         select: {

@@ -2,7 +2,7 @@ import AltriVideo from '@/components/AltriVideo';
 import { FadeUp } from '@/components/Animate';
 import { Footer } from '@/components/Footer';
 import { Header } from '@/components/Header';
-import { getLocalizedVideoTitle } from '@/lib/video';
+import {getLocalizedVideoTitle, getVideoEmbedUrl} from '@/lib/video';
 import { client } from '@/sanity/lib/client';
 import { Video, VideoTranslation } from '@/types';
 
@@ -34,7 +34,7 @@ export default async function VideoDetailPage({ params }: { params: Promise<{ id
         titolo: getLocalizedVideoTitle(videoDocument.traduzioni, lang, videoDocument.titolo)
     };
 
-    const videoId = video.url.split('v=')[1]?.split('&')[0];
+    const embedUrl = getVideoEmbedUrl(video.url);
 
     return (
         <main className="bg-[#1c1d26] min-h-screen text-white">
@@ -48,13 +48,14 @@ export default async function VideoDetailPage({ params }: { params: Promise<{ id
                 
                 {/* 2. L'iframe del video subentra subito dopo con un leggero delay */}
                 <FadeUp delay={0.25}>
-                    <div className="aspect-video w-full rounded-2xl overflow-hidden shadow-2xl">
+                    {embedUrl ? <div className="aspect-video w-full rounded-2xl overflow-hidden shadow-2xl">
                         <iframe
                             className="w-full h-full"
-                            src={`https://www.youtube.com/embed/${videoId}`}
+                            src={embedUrl}
+                            title={video.titolo}
                             allowFullScreen
                         ></iframe>
-                    </div>
+                    </div> : <a href={video.url} target="_blank" rel="noreferrer" className="inline-flex rounded-full border border-white/30 px-6 py-3 text-sm hover:bg-white/10">Apri il video originale</a>}
 
                     {video.data && (
                         <p className="mt-8 text-white/60">
