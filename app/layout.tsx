@@ -3,6 +3,7 @@ import 'yet-another-react-lightbox/styles.css';
 import "./globals.css";
 
 import { Inter, Playfair_Display } from 'next/font/google';
+import { AnalyticsConsent } from '@/components/AnalyticsConsent';
 
 const playfair = Playfair_Display({ subsets: ['latin'], variable: '--font-serif' });
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
@@ -19,7 +20,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="it" className={`${playfair.variable} ${inter.variable}`}>
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        {children}
+        <AnalyticsConsent />
+      </body>
     </html>
   );
 }

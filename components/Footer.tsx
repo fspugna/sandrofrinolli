@@ -1,4 +1,5 @@
-// components/Footer.tsx
+import {CookieSettingsButton} from './CookieSettingsButton'
+
 export function Footer({ lang = 'it' }: { lang?: string }) {
     
     // Puoi definire un piccolo dizionario interno per il footer
@@ -14,6 +15,7 @@ export function Footer({ lang = 'it' }: { lang?: string }) {
                 <p className="text-white/60 text-sm">
                     © {new Date().getFullYear()} Sandro Frinolli Puzzilli. {translations[lang as keyof typeof translations] || translations.it}
                 </p>
+                <CookieSettingsButton lang={lang} />
             </div>
         </footer>
     );
