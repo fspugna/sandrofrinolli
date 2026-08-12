@@ -32,7 +32,7 @@ export default async function OperaDetailPage({ params }: Props) {
 	return (
 		<main className="bg-[#1c1d26] text-white min-h-screen">
 			<Header />
-			<div className="max-w-6xl mx-auto px-6 py-24">
+			<div className="max-w-6xl mx-auto px-6 py-4">
 				<OperaDetailView opera={opera} />
 			</div>
 		</main>

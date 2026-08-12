@@ -54,10 +54,10 @@ export default function OperaDetailView({ opera }: { opera: Opera }) {
     }, [isOpen]);
 
     return (
-        <div className="flex flex-col gap-8">
+        <div className="flex flex-col">
             {/* Link di ritorno alla galleria */}
             {galleriaId && (
-                <div>
+                <div className="pt-1 mb-4 md:mb-6">
                     <Link
                         href={`/${lang}/gallerie/${galleriaId}`}
                         className="inline-flex items-center text-xs uppercase tracking-widest text-[#9ca9af] hover:text-white transition-colors duration-200"
@@ -70,7 +70,7 @@ export default function OperaDetailView({ opera }: { opera: Opera }) {
             <div className="grid md:grid-cols-2 gap-12 items-start">
                 {/* Immagine con click per aprire il Lightbox */}
                 <div
-                    className="relative aspect-[3/4] overflow-hidden rounded-lg bg-[#272833] cursor-zoom-in group"
+                    className="relative aspect-[4/5] md:aspect-[3/4] overflow-hidden rounded-lg bg-[#272833] cursor-zoom-in group"
                     onClick={() => setIsOpen(true)}
                 >
                     {imageUrl && (
@@ -82,10 +82,8 @@ export default function OperaDetailView({ opera }: { opera: Opera }) {
                             priority
                         />
                     )}
-                    <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                        <span className="text-xs uppercase tracking-widest bg-black/60 px-4 py-2 rounded-full border border-white/20">
-                            Clicca per ingrandire
-                        </span>
+                    <div className="absolute inset-0 bg-black/20 opacity-0 md:group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <div className="absolute bottom-3 right-3 rounded-full bg-black/60 p-2 backdrop-blur-sm md:opacity-0 md:group-hover:opacity-100 transition-opacity"><span aria-label="Ingrandisci">🔍</span></div>
                     </div>
                 </div>
 
