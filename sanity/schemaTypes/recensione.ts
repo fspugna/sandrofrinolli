@@ -25,7 +25,18 @@ export const recensione = defineType({
                         }
                     },
                     { name: 'titolo', type: 'string', title: 'Titolo' },
-                    { name: 'contenuto', title: 'Contenuto', type: 'array', of: [{ type: 'block' }] }
+                    { name: 'contenuto', title: 'Contenuto', type: 'array', of: [{
+                        type: 'block',
+                        marks: { annotations: [{
+                            name: 'link',
+                            type: 'object',
+                            fields: [{
+                                name: 'href',
+                                type: 'url',
+                                validation: (rule) => rule.uri({scheme: ['http', 'https', 'mailto', 'tel']}),
+                            }],
+                        }] }
+                    }] }
                 ]
             }]
         }),
@@ -34,7 +45,11 @@ export const recensione = defineType({
             name: 'immagini',
             title: 'Immagini',
             type: 'array',
-            of: [{ type: 'image' }]
+            of: [{
+                type: 'image',
+                options: { hotspot: true },
+                fields: [{ name: 'alt', type: 'string', title: 'Testo alternativo' }]
+            }]
         }),
     ],
     preview: {

@@ -1,0 +1,6 @@
+extracted/
+backups/
+transformed/
+reports/*.json
+source/
+!source/.gitkeep

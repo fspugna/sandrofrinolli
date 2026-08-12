@@ -12,6 +12,13 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Raw legacy sources and generated migration artifacts are input data,
+    // not application code maintained by this project.
+    "migration/source/**",
+    "migration/extracted/**",
+    "migration/transformed/**",
+    "migration/reports/**",
+    "migration/backups/**",
   ]),
 ]);
 

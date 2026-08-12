@@ -9,6 +9,10 @@ export const opera = defineType({
             name: 'immagine',
             title: 'Immagine',
             type: 'image', // Carichi l'immagine una sola volta qui
+            options: { hotspot: true },
+            fields: [
+                defineField({ name: 'alt', type: 'string', title: 'Testo alternativo' }),
+            ],
         }),
         defineField({
             name: 'audio',

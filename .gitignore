@@ -17,6 +17,9 @@
 /.next/
 /out/
 
+# Sanity CLI generated runtime
+/.sanity/
+
 # production
 /build
 
@@ -32,6 +35,29 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+
+# local credentials and account recovery material
+recovery-codes.txt
+*recovery-codes*.txt
+*.token
+
+# local archives, database dumps and backups
+*.sql
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.bak
+
+# migration inputs and generated/private outputs
+/migration/source/
+/migration/extracted/
+/migration/transformed/*
+!/migration/transformed/.gitkeep
+/migration/reports/*
+!/migration/reports/.gitkeep
+/migration/backups/*
+!/migration/backups/.gitkeep
 
 # vercel
 .vercel
