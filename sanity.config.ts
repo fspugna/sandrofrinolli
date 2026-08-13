@@ -11,6 +11,9 @@ export default defineConfig({
     dataset: 'production',
     plugins: [structureTool({structure}), itITLocale()],
     document: {
+        comments: {
+            enabled: false,
+        },
         newDocumentOptions: (previous) => previous.filter((item) => item.templateId !== 'about'),
         actions: (previous, context) => context.schemaType === 'about'
             ? previous.filter((action) => action.action !== 'delete' && action.action !== 'duplicate')
