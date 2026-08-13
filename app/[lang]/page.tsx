@@ -8,6 +8,7 @@ import { getPrimaryImage, getYouTubeId } from '@/lib/utils'
 import { client } from '@/sanity/lib/client'
 import { urlFor } from '@/sanity/lib/image'
 import { Esposizione, Galleria, HomeData, labelsTranslations, Notizia, Recensione, Video } from '@/types'
+import { stegaClean } from '@sanity/client/stega'
 import Image from 'next/image'
 import Link from 'next/link'
 
@@ -17,12 +18,39 @@ const dateLocales = {
   es: 'es-ES',
 } as const
 
+const heroStyleClasses = {
+  carattere: {sans: 'font-sans', serif: 'font-serif'},
+  stile: {normale: 'not-italic', corsivo: 'italic'},
+  peso: {leggero: 'font-light', normale: 'font-normal', grassetto: 'font-bold'},
+  dimensione: {
+    piccola: 'text-2xl md:text-3xl lg:text-4xl',
+    media: 'text-3xl md:text-4xl lg:text-5xl',
+    grande: 'text-4xl md:text-5xl lg:text-6xl',
+  },
+  colore: {bianco: 'text-white', tenue: 'text-white/75', blu: 'text-blue-400'},
+} as const
+
+function getHeroLineClasses(
+  style: HomeData['header']['stilePrimaRiga'],
+  defaults: {carattere: string; stile: string; peso: string; dimensione: string; colore: string},
+) {
+  return [
+    heroStyleClasses.carattere[stegaClean(style?.carattere) as keyof typeof heroStyleClasses.carattere] || defaults.carattere,
+    heroStyleClasses.stile[stegaClean(style?.stile) as keyof typeof heroStyleClasses.stile] || defaults.stile,
+    heroStyleClasses.peso[stegaClean(style?.peso) as keyof typeof heroStyleClasses.peso] || defaults.peso,
+    heroStyleClasses.dimensione[stegaClean(style?.dimensione) as keyof typeof heroStyleClasses.dimensione] || defaults.dimensione,
+    heroStyleClasses.colore[stegaClean(style?.colore) as keyof typeof heroStyleClasses.colore] || defaults.colore,
+  ].join(' ')
+}
+
 async function getHomeData(lang: string): Promise<HomeData> {
   return await client.fetch(`{
     "header": *[_id == "header"][0]{
       fotoHeader,
       "primaRiga": traduzioni[language == $lang][0].primaRiga,
-      "secondaRiga": traduzioni[language == $lang][0].secondaRiga
+      "secondaRiga": traduzioni[language == $lang][0].secondaRiga,
+      stilePrimaRiga,
+      stileSecondaRiga
     },
     "about": *[_id == "about"][0]{
       "titolo": coalesce(traduzioni[language == $lang][0].titolo, traduzioni[language == "it"][0].titolo),
@@ -82,6 +110,14 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
   const data = await getHomeData(lang);
   const t = labelsTranslations[lang as keyof typeof labelsTranslations] || labelsTranslations.it;
   const dateLocale = dateLocales[lang as keyof typeof dateLocales] || dateLocales.it;
+  const primaRigaClasses = getHeroLineClasses(data.header?.stilePrimaRiga, {
+    carattere: 'font-sans', stile: 'not-italic', peso: 'font-light',
+    dimensione: 'text-4xl md:text-5xl lg:text-6xl', colore: 'text-white',
+  });
+  const secondaRigaClasses = getHeroLineClasses(data.header?.stileSecondaRiga, {
+    carattere: 'font-serif', stile: 'italic', peso: 'font-light',
+    dimensione: 'text-4xl md:text-5xl lg:text-6xl', colore: 'text-white',
+  });
 
   const gallerieValide = data.gallerie || [];
 
@@ -101,9 +137,9 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
           <div className="relative z-20 text-center px-6 w-full max-w-4xl mx-auto">
             {/* Aggiunto il delay per far comparire il testo dopo l'inizio dello sfondo */}
             <FadeUp delay={0.8}>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-light tracking-tighter leading-tight">
-                {data.header?.primaRiga || t.heroLine1}<br />
-                <span className="italic font-serif">{data.header?.secondaRiga || t.heroLine2}</span>
+              <h1 className="tracking-tighter leading-tight">
+                <span className={`block ${primaRigaClasses}`}>{data.header?.primaRiga || t.heroLine1}</span>
+                <span className={`block ${secondaRigaClasses}`}>{data.header?.secondaRiga || t.heroLine2}</span>
               </h1>
             </FadeUp>
           </div>

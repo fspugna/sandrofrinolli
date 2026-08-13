@@ -22,10 +22,20 @@ export interface PortableImageProps {
 
 export type PortableContentBlock = PortableTextBlock | SanityImage;
 
+export interface HeroLineStyle {
+    carattere?: 'sans' | 'serif';
+    stile?: 'normale' | 'corsivo';
+    peso?: 'leggero' | 'normale' | 'grassetto';
+    dimensione?: 'piccola' | 'media' | 'grande';
+    colore?: 'bianco' | 'tenue' | 'blu';
+}
+
 export interface Header {
     fotoHeader: SanityImage[];
     primaRiga?: string;
     secondaRiga?: string;
+    stilePrimaRiga?: HeroLineStyle;
+    stileSecondaRiga?: HeroLineStyle;
 }
 
 export interface About {
