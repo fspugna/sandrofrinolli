@@ -24,6 +24,8 @@ export type PortableContentBlock = PortableTextBlock | SanityImage;
 
 export interface Header {
     fotoHeader: SanityImage[];
+    primaRiga?: string;
+    secondaRiga?: string;
 }
 
 export interface About {

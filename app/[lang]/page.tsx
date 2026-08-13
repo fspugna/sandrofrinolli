@@ -21,7 +21,9 @@ const dateLocales = {
 async function getHomeData(lang: string): Promise<HomeData> {
   return await client.fetch(`{
     "header": *[_type == "header"][0]{
-      fotoHeader
+      fotoHeader,
+      "primaRiga": traduzioni[language == $lang][0].primaRiga,
+      "secondaRiga": traduzioni[language == $lang][0].secondaRiga
     },
     "about": *[_id == "about"][0]{
       "titolo": coalesce(traduzioni[language == $lang][0].titolo, traduzioni[language == "it"][0].titolo),
@@ -102,8 +104,8 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
             {/* Aggiunto il delay per far comparire il testo dopo l'inizio dello sfondo */}
             <FadeUp delay={0.8}>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-light tracking-tighter leading-tight">
-                {t.heroLine1}<br />
-                <span className="italic font-serif">{t.heroLine2}</span>
+                {data.header?.primaRiga || t.heroLine1}<br />
+                <span className="italic font-serif">{data.header?.secondaRiga || t.heroLine2}</span>
               </h1>
             </FadeUp>
           </div>
