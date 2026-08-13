@@ -30,7 +30,7 @@ async function getHomeData(lang: string): Promise<HomeData> {
       foto,
       sfondo
     },
-    "gallerie": *[_type == "galleria"]{
+    "gallerie": *[_type == "galleria"] | order(ordine asc, _id asc){
       _id,    
       "nome": traduzioni[language == $lang][0].nome,
       "opere": opere[]->{

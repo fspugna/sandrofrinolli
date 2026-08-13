@@ -6,7 +6,7 @@ import Link from 'next/link';
 
 export default async function AltreGallerie({ currentId, lang }: { currentId: string; lang: string }) {
     const altreGallerie = await client.fetch(`
-        *[_type == "galleria" && _id != $currentId][0..2] {
+        *[_type == "galleria" && _id != $currentId] | order(ordine asc, _id asc)[0...3] {
             _id,
             "nome": coalesce(traduzioni[language == $lang][0].nome, traduzioni[0].nome, nome),
             "copertina": copertina->immagine

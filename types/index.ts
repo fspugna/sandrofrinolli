@@ -90,6 +90,7 @@ export interface Opera {
 
 export interface Galleria {
     _id: string;
+    ordine?: number;
     nome: string;
     opere: Opera[];
     copertina: SanityImage;

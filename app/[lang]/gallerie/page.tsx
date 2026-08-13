@@ -24,7 +24,7 @@ export default async function GalleriePage({
     const offset = (page - 1) * limit;
 
     const galleriaDocuments: GalleriaDocument[] = await client.fetch(`
-        *[_type == "galleria"] [${offset}...${offset + limit}] {
+        *[_type == "galleria"] | order(ordine asc, _id asc) [${offset}...${offset + limit}] {
             _id,
             "nome": coalesce(traduzioni[language == $lang][0].nome, traduzioni[0].nome, nome),
             "copertina": copertina->immagine, 

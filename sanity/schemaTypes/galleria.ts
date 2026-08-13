@@ -5,6 +5,14 @@ export const galleria = defineType({
     title: 'Gallerie',
     type: 'document',
     fields: [
+        defineField({
+            name: 'ordine',
+            title: 'Ordine di visualizzazione',
+            description: 'Le gallerie con il numero più basso vengono mostrate per prime.',
+            type: 'number',
+            initialValue: 100,
+            validation: (rule) => rule.required().integer().min(0),
+        }),
         // Sostituiamo il campo "nome" singolo con un array di traduzioni
         defineField({
             name: 'traduzioni',
@@ -47,11 +55,13 @@ export const galleria = defineType({
     preview: {
         select: {
             title: 'traduzioni.0.nome',
+            ordine: 'ordine',
             media: 'copertina.immagine' // Sanity segue il riferimento all'opera per prendere l'immagine
         },
         prepare(selection) {
             return {
                 title: selection.title || 'Galleria senza nome',
+                subtitle: `Ordine: ${selection.ordine ?? 'non impostato'}`,
                 media: selection.media
             };
         }
