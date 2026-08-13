@@ -30,7 +30,7 @@ async function getHomeData(lang: string): Promise<HomeData> {
       foto,
       sfondo
     },
-    "gallerie": *[_type == "galleria"] | order(ordine asc, _id asc){
+    "gallerie": *[_type == "galleria" && mostraInHomepage == true && count(opere) > 0] | order(ordine asc, _id asc)[0...4]{
       _id,    
       "nome": traduzioni[language == $lang][0].nome,
       "opere": opere[]->{
@@ -40,6 +40,7 @@ async function getHomeData(lang: string): Promise<HomeData> {
         immagine
       }
     },
+    "totaleGallerie": count(*[_type == "galleria" && count(opere) > 0]),
     "video": *[_type == "video"] | order(data desc)[0] {
       _id,
       "titolo": coalesce(traduzioni[language == $lang][0].titolo, traduzioni[0].titolo),
@@ -82,9 +83,7 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
   const t = labelsTranslations[lang as keyof typeof labelsTranslations] || labelsTranslations.it;
   const dateLocale = dateLocales[lang as keyof typeof dateLocales] || dateLocales.it;
 
-  // Filtriamo all'origine eventuali gallerie strutturate nel database ma prive di opere effettive,
-  // così da prevenire i quadrati grigi vuoti sulla griglia della Home.
-  const gallerieValide = data.gallerie?.filter((g: Galleria) => g.opere && g.opere.length > 0) || [];
+  const gallerieValide = data.gallerie || [];
 
   return (
     <main className="bg-[#1c1d26] text-white relative min-h-screen selection:bg-blue-500/30">
@@ -145,6 +144,17 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
               </FadeUp>
             ))}
           </div>
+
+          {gallerieValide.length === 4 && data.totaleGallerie > 4 && (
+            <FadeUp delay={0.3} className="mt-14 text-center">
+              <Link
+                href={`/${lang}/gallerie`}
+                className="inline-block text-[11px] uppercase tracking-widest text-white/40 hover:text-white transition-colors border-b border-white/10 pb-1"
+              >
+                {t.viewMoreGalleries} →
+              </Link>
+            </FadeUp>
+          )}
         </section>
 
         {/* 4. VIDEO - Addolcito il blocco video per evitare rettangoli neri netti */}

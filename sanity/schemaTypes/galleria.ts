@@ -13,6 +13,13 @@ export const galleria = defineType({
             initialValue: 100,
             validation: (rule) => rule.required().integer().min(0),
         }),
+        defineField({
+            name: 'mostraInHomepage',
+            title: 'Mostra in homepage',
+            description: 'Abilita la galleria nella homepage. Verranno mostrate al massimo le prime 4 in base all’ordine.',
+            type: 'boolean',
+            initialValue: false,
+        }),
         // Sostituiamo il campo "nome" singolo con un array di traduzioni
         defineField({
             name: 'traduzioni',
@@ -56,12 +63,13 @@ export const galleria = defineType({
         select: {
             title: 'traduzioni.0.nome',
             ordine: 'ordine',
+            mostraInHomepage: 'mostraInHomepage',
             media: 'copertina.immagine' // Sanity segue il riferimento all'opera per prendere l'immagine
         },
         prepare(selection) {
             return {
                 title: selection.title || 'Galleria senza nome',
-                subtitle: `Ordine: ${selection.ordine ?? 'non impostato'}`,
+                subtitle: `Ordine: ${selection.ordine ?? 'non impostato'} · Homepage: ${selection.mostraInHomepage ? 'sì' : 'no'}`,
                 media: selection.media
             };
         }

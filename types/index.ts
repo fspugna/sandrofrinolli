@@ -91,6 +91,7 @@ export interface Opera {
 export interface Galleria {
     _id: string;
     ordine?: number;
+    mostraInHomepage?: boolean;
     nome: string;
     opere: Opera[];
     copertina: SanityImage;
@@ -118,6 +119,7 @@ export interface HomeData {
     header: Header;
     about: About;
     gallerie: Galleria[];
+    totaleGallerie: number;
     video?: Video;
     esposizioni: Esposizione[];
     notizie: Notizia[];
@@ -131,6 +133,7 @@ export const labelsTranslations = {
         heroLine2: "la narrazione di un'esperienza.",
         artistLabel: "L'Artista",
         galleries: 'Gallerie',
+        viewMoreGalleries: 'Vedi altre gallerie',
         artworkAlt: "Opera d'arte",
         videos: 'Video',
         viewAllVideos: 'Vedi tutti i video',
@@ -153,6 +156,7 @@ export const labelsTranslations = {
         heroLine2: 'the narration of an experience.',
         artistLabel: 'The Artist',
         galleries: 'Galleries',
+        viewMoreGalleries: 'See more galleries',
         artworkAlt: 'Artwork',
         videos: 'Videos',
         viewAllVideos: 'See all videos',
@@ -175,6 +179,7 @@ export const labelsTranslations = {
         heroLine2: 'la narracion de una experiencia.',
         artistLabel: 'El Artista',
         galleries: 'Galerias',
+        viewMoreGalleries: 'Ver más galerías',
         artworkAlt: 'Obra de arte',
         videos: 'Videos',
         viewAllVideos: 'Ver todos los videos',
