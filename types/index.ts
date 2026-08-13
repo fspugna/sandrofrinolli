@@ -85,7 +85,7 @@ export interface Opera {
     titolo: string;
     immagine: SanityImage;
     descrizione: string;
-    audio?: SanityAudioFile; // Campo audio come definito nello schema Sanity
+    audio?: SanityAudioFile;
 }
 
 export interface Galleria {

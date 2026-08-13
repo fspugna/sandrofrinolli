@@ -9,7 +9,10 @@ async function getOpera(operaId: string, lang: string) {
 		"titolo": traduzioni[language == $lang][0].titolo,
 		"descrizione": traduzioni[language == $lang][0].descrizione,
 		immagine,
-		audio {
+		"audio": select(
+			$lang == "it" => coalesce(traduzioni[language == $lang][0].audio, audio),
+			traduzioni[language == $lang][0].audio
+		) {
 			titolo,
 			asset->{
 			url

@@ -1,4 +1,4 @@
-import { defineField, defineType } from 'sanity'
+import {defineArrayMember, defineField, defineType} from 'sanity'
 
 export const opera = defineType({
     name: 'opera',
@@ -16,10 +16,17 @@ export const opera = defineType({
         }),
         defineField({
             name: 'audio',
-            title: 'Traccia Audio / Commento Sonoro',
+            title: 'Traccia audio non localizzata (deprecata)',
             type: 'file',
+            description: 'Campo precedente: usa la traccia audio dentro ogni traduzione.',
+            deprecated: {
+                reason: 'L’audio ora dipende dalla lingua e va inserito nella relativa traduzione.',
+            },
+            readOnly: true,
+            hidden: ({value}) => value === undefined,
+            initialValue: undefined,
             options: {
-                accept: 'audio/*', // Accetta solo file audio (mp3, wav, m4a, ecc.)
+                accept: 'audio/*',
             },
             fields: [
                 defineField({
@@ -34,10 +41,10 @@ export const opera = defineType({
             name: 'traduzioni',
             title: 'Traduzioni',
             type: 'array',
-            of: [{
+            of: [defineArrayMember({
                 type: 'object',
                 fields: [
-                    {
+                    defineField({
                         name: 'language',
                         title: 'Lingua',
                         type: 'string',
@@ -48,12 +55,37 @@ export const opera = defineType({
                                 { title: 'Español', value: 'es' }
                             ],
                             // Opzionale: layout: 'radio' lo renderebbe una scelta a pulsanti invece di una tendina
-                        }
-                    },
-                    { name: 'titolo', type: 'string', title: 'Titolo' },
-                    { name: 'descrizione', type: 'text', title: 'Descrizione' }
-                ]
-            }]
+                        },
+                        validation: (rule) => rule.required(),
+                    }),
+                    defineField({name: 'titolo', type: 'string', title: 'Titolo'}),
+                    defineField({name: 'descrizione', type: 'text', title: 'Descrizione'}),
+                    defineField({
+                        name: 'audio',
+                        title: 'Traccia audio / Commento sonoro',
+                        description: 'Questa traccia viene riprodotta solo per questa lingua.',
+                        type: 'file',
+                        options: {accept: 'audio/*'},
+                        fields: [
+                            defineField({
+                                name: 'titolo',
+                                type: 'string',
+                                title: 'Titolo o etichetta audio (opzionale)',
+                            }),
+                        ],
+                    }),
+                ],
+                preview: {
+                    select: {title: 'titolo', subtitle: 'language'},
+                },
+            })],
+            validation: (rule) => rule.custom((translations) => {
+                const languages = (translations || [])
+                    .map((translation) => (translation as {language?: string}).language)
+                    .filter(Boolean)
+
+                return new Set(languages).size === languages.length || 'Ogni lingua può essere inserita una sola volta.'
+            }),
         })
     ],
     preview: {
