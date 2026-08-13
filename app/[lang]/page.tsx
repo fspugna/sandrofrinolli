@@ -7,8 +7,7 @@ import ScrollToTop from '@/components/ScrollToTop'
 import { getPrimaryImage, getYouTubeId } from '@/lib/utils'
 import { client } from '@/sanity/lib/client'
 import { urlFor } from '@/sanity/lib/image'
-import { Esposizione, Galleria, HomeData, labelsTranslations, Notizia, Recensione, SocialItem, Video } from '@/types'
-import { PortableText } from '@portabletext/react'
+import { Esposizione, Galleria, HomeData, labelsTranslations, Notizia, Recensione, Video } from '@/types'
 import Image from 'next/image'
 import Link from 'next/link'
 
@@ -20,7 +19,7 @@ const dateLocales = {
 
 async function getHomeData(lang: string): Promise<HomeData> {
   return await client.fetch(`{
-    "header": *[_type == "header"][0]{
+    "header": *[_id == "header"][0]{
       fotoHeader,
       "primaRiga": traduzioni[language == $lang][0].primaRiga,
       "secondaRiga": traduzioni[language == $lang][0].secondaRiga

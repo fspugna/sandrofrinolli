@@ -14,8 +14,10 @@ export default defineConfig({
         comments: {
             enabled: false,
         },
-        newDocumentOptions: (previous) => previous.filter((item) => item.templateId !== 'about'),
-        actions: (previous, context) => context.schemaType === 'about'
+        newDocumentOptions: (previous) => previous.filter(
+            (item) => !['about', 'header'].includes(item.templateId),
+        ),
+        actions: (previous, context) => ['about', 'header'].includes(context.schemaType)
             ? previous.filter((action) => action.action !== 'delete' && action.action !== 'duplicate')
             : previous,
     },

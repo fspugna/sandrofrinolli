@@ -2,6 +2,7 @@ import {defineArrayMember, defineField, defineType} from 'sanity'
 
 export const header = defineType({
     name: 'header',
+    title: 'Header Homepage',
     type: 'document',
     fields: [
         defineField({
