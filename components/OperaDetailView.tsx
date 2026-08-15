@@ -89,7 +89,7 @@ export default function OperaDetailView({ opera }: { opera: Opera }) {
                             width={imageWidth}
                             height={imageHeight}
                             sizes="(max-width: 767px) 100vw, 50vw"
-                            className="mx-auto h-auto max-h-[75vh] w-auto max-w-full object-contain"
+                            className="mx-auto h-auto w-full object-contain md:max-h-[75vh] md:w-auto md:max-w-full"
                             priority
                         />
                     )}
