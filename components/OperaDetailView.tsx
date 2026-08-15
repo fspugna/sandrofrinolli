@@ -36,6 +36,9 @@ export default function OperaDetailView({ opera }: { opera: Opera }) {
     const backLabel = backLabels[lang] || backLabels.it;
 
     const imageUrl = opera.immagine ? urlFor(opera.immagine).url() : '';
+    const dimensions = opera.immagine?.asset?.metadata?.dimensions;
+    const imageWidth = dimensions?.width || 1200;
+    const imageHeight = dimensions?.height || 1600;
     const audioUrl = opera.audio?.asset?.url;
     const audioTitolo = opera.audio?.titolo || audioLabels[lang] || audioLabels.it;
 
@@ -76,15 +79,17 @@ export default function OperaDetailView({ opera }: { opera: Opera }) {
             <div className="grid md:grid-cols-2 gap-12 items-start">
                 {/* Immagine con click per aprire il Lightbox */}
                 <div
-                    className="relative aspect-[4/5] md:aspect-[3/4] overflow-hidden rounded-lg bg-[#272833] cursor-zoom-in group"
+                    className="relative overflow-hidden rounded-lg bg-[#272833] cursor-zoom-in group"
                     onClick={() => setIsOpen(true)}
                 >
                     {imageUrl && (
                         <Image
                             src={imageUrl}
                             alt={opera.titolo || "Opera"}
-                            fill
-                            className="object-cover transition-transform duration-500 group-hover:scale-102"
+                            width={imageWidth}
+                            height={imageHeight}
+                            sizes="(max-width: 767px) 100vw, 50vw"
+                            className="mx-auto h-auto max-h-[75vh] w-auto max-w-full object-contain"
                             priority
                         />
                     )}

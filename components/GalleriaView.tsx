@@ -15,20 +15,26 @@ export default function GalleriaView({ galleria }: { galleria: Galleria }) {
 
 	return (
 		<div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-			{galleria.opere?.map((opera: Opera) => (
+			{galleria.opere?.map((opera: Opera) => {
+				const dimensions = opera.immagine?.asset?.metadata?.dimensions;
+				const width = dimensions?.width || 600;
+				const height = dimensions?.height || 800;
+
+				return (
 				<Link
 					key={opera._id}
 					href={`/${lang}/gallerie/${galleria._id}/opere/${opera._id}`}
 					className="group block cursor-pointer"
 				>
-					<div className="aspect-[3/4] overflow-hidden rounded-lg bg-[#272833]">
+					<div className="overflow-hidden rounded-lg bg-[#272833]">
 						{opera.immagine && (
 							<Image
-								src={urlFor(opera.immagine).url()}
+								src={urlFor(opera.immagine).width(900).fit('max').url()}
 								alt={opera.titolo || "Opera"}
-								width={600}
-								height={800}
-								className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+								width={width}
+								height={height}
+								sizes="(max-width: 767px) 100vw, (max-width: 1023px) 50vw, 33vw"
+								className="h-auto w-full"
 							/>
 						)}
 					</div>
@@ -39,7 +45,8 @@ export default function GalleriaView({ galleria }: { galleria: Galleria }) {
 						{opera.descrizione || ""}
 					</p>
 				</Link>
-			))}
+				);
+			})}
 		</div>
 	);
 }

@@ -5,7 +5,14 @@ export interface SanityImage {
     _type: 'image';
     _key?: string; // Utile per le liste in PortableText
     asset: {
-        _ref: string;
+        _ref?: string;
+        _id?: string;
+        metadata?: {
+            dimensions?: {
+                width: number;
+                height: number;
+            };
+        };
     };
     alt?: string;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

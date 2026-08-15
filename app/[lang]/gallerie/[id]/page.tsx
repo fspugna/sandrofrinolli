@@ -44,7 +44,13 @@ export default async function GalleriaPage({ params }: Props) {
             "opere": opere[]->{
                 _id,
                 "titolo": coalesce(traduzioni[language == $lang][0].titolo, traduzioni[0].titolo, titolo),
-                immagine,
+                immagine {
+                    ...,
+                    asset->{
+                        _id,
+                        metadata { dimensions { width, height } }
+                    }
+                },
                 "descrizione": coalesce(traduzioni[language == $lang][0].descrizione, traduzioni[0].descrizione, descrizione)
             }
         }
