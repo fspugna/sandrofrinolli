@@ -19,6 +19,12 @@ const backLabels: Record<string, string> = {
     es: '← Volver a la galería',
 };
 
+const audioLabels: Record<string, string> = {
+    it: "Ascolta il commento dell'opera",
+    en: 'Listen to the artwork commentary',
+    es: 'Escucha el comentario de la obra',
+};
+
 export default function OperaDetailView({ opera }: { opera: Opera }) {
     const [isOpen, setIsOpen] = useState(false);
     const params = useParams();
@@ -31,7 +37,7 @@ export default function OperaDetailView({ opera }: { opera: Opera }) {
 
     const imageUrl = opera.immagine ? urlFor(opera.immagine).url() : '';
     const audioUrl = opera.audio?.asset?.url;
-    const audioTitolo = opera.audio?.titolo || "Ascolta il commento dell'opera";
+    const audioTitolo = opera.audio?.titolo || audioLabels[lang] || audioLabels.it;
 
     const slides = [
         {
