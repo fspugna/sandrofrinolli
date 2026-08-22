@@ -59,7 +59,7 @@ export default async function NotiziePage({
     const offset = (page - 1) * limit;
 
     const notiziaDocuments: NotiziaDocument[] = await client.fetch(`
-        *[_type == "notizia"] | order(data desc) [${offset}...${offset + limit}] {
+        *[_type == "notizia"] | order(orderRank asc, _id asc) [${offset}...${offset + limit}] {
             _id,
             titolo,
             data,

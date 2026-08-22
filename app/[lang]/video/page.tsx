@@ -24,7 +24,7 @@ export default async function VideoPage({
 
     // 1. Recupera solo i video associati alla pagina corrente
     const videoDocuments: VideoDocument[] = await client.fetch(`
-        *[_type == "video"] | order(data desc) [${offset}...${offset + limit}] {
+        *[_type == "video"] | order(orderRank asc, _id asc) [${offset}...${offset + limit}] {
             _id,
             titolo,
             traduzioni[]{

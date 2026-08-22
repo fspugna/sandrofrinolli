@@ -31,7 +31,7 @@ async function getRecensioneCompleta(id: string) {
         contenuto
       }
     },
-    "altreRecensioni": *[_type == "recensione" && _id != $id] | order(data desc)[0..2]{
+    "altreRecensioni": *[_type == "recensione" && _id != $id] | order(orderRank asc, _id asc)[0..2]{
       _id,
       titolo,
       data,

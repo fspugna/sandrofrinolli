@@ -6,7 +6,7 @@ import { getYouTubeThumbnail } from '@/lib/video';
 
 export default async function AltriVideo({ currentId, lang }: { currentId: string; lang: string }) {
     const altriVideo = await client.fetch(`
-        *[_type == "video" && _id != $currentId] | order(data desc)[0..2] {
+        *[_type == "video" && _id != $currentId] | order(orderRank asc, _id asc)[0..2] {
             _id,
             "titolo": coalesce(traduzioni[language == $lang][0].titolo, traduzioni[0].titolo, titolo),
             url

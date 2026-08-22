@@ -32,7 +32,7 @@ async function getNotiziaCompleta(id: string) {
         contenuto
       }
     },
-    "altreNotizie": *[_type == "notizia" && _id != $id] | order(data desc)[0..2]{
+    "altreNotizie": *[_type == "notizia" && _id != $id] | order(orderRank asc, _id asc)[0..2]{
       _id,
       titolo,
       data,

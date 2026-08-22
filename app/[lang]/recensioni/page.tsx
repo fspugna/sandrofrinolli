@@ -24,7 +24,7 @@ export default async function RecensioniPage({
     const offset = (page - 1) * limit;
 
     const recensioneDocuments: RecensioneDocument[] = await client.fetch(`
-        *[_type == "recensione"] | order(data desc) [${offset}...${offset + limit}] {
+        *[_type == "recensione"] | order(orderRank asc, _id asc) [${offset}...${offset + limit}] {
             _id,
             titolo,
             data,

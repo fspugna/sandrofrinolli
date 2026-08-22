@@ -24,7 +24,7 @@ export default async function EsposizioniPage({
     const offset = (page - 1) * limit;
 
     const esposizioneDocuments: EsposizioneDocument[] = await client.fetch(`
-        *[_type == "esposizione"] | order(data desc) [${offset}...${offset + limit}] {
+        *[_type == "esposizione"] | order(orderRank asc, _id asc) [${offset}...${offset + limit}] {
             _id,
             titolo,
             data,

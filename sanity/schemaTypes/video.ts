@@ -1,10 +1,13 @@
 import {defineArrayMember, defineField, defineType} from 'sanity'
+import {orderRankField, orderRankOrdering} from '@sanity/orderable-document-list'
 
 export const video = defineType({
     name: 'video',
     title: 'Video',
     type: 'document',
+    orderings: [orderRankOrdering],
     fields: [
+        orderRankField({type: 'video'}),
         defineField({
             name: 'traduzioni',
             title: 'Traduzioni',

@@ -33,7 +33,7 @@ async function getEsposizioneCompleta(id: string) {
         contenuto
       }
     },
-    "altreEsposizioni": *[_type == "esposizione" && _id != $id] | order(data desc)[0..2]{
+    "altreEsposizioni": *[_type == "esposizione" && _id != $id] | order(orderRank asc, _id asc)[0..2]{
       _id,
       titolo,
       data,

@@ -69,27 +69,27 @@ async function getHomeData(lang: string): Promise<HomeData> {
       }
     },
     "totaleGallerie": count(*[_type == "galleria" && count(opere) > 0]),
-    "video": *[_type == "video"] | order(data desc)[0] {
+    "video": *[_type == "video"] | order(orderRank asc, _id asc)[0] {
       _id,
       "titolo": coalesce(traduzioni[language == $lang][0].titolo, traduzioni[0].titolo),
       data,
       url
     },
-    "esposizioni": *[_type == "esposizione"] | order(data desc)[0..3]{
+    "esposizioni": *[_type == "esposizione"] | order(orderRank asc, _id asc)[0..3]{
       _id,
       data,
       immagini,
       contenuto,
       "titolo": coalesce(traduzioni[language == $lang][0].titolo, traduzioni[0].titolo, titolo)
     },
-    "notizie": *[_type == "notizia"] | order(data desc)[0..3]{
+    "notizie": *[_type == "notizia"] | order(orderRank asc, _id asc)[0..3]{
       _id,
       data,
       immagini,
       contenuto,
       "titolo": coalesce(traduzioni[language == $lang][0].titolo, traduzioni[0].titolo, titolo)
     },
-    "recensioni": *[_type == "recensione"] | order(data desc)[0..3]{
+    "recensioni": *[_type == "recensione"] | order(orderRank asc, _id asc)[0..3]{
       _id,
       data,
       immagini,
