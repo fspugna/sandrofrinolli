@@ -2,7 +2,7 @@ import {GenerateIcon} from '@sanity/icons/Generate'
 import {SortIcon} from '@sanity/icons/Sort'
 import {SyncIcon} from '@sanity/icons/Sync'
 import type {ConfigContext} from 'sanity'
-import type {StructureBuilder, StructureResolver} from 'sanity/structure'
+import type {Child, StructureBuilder, StructureResolver} from 'sanity/structure'
 import {SyncableOrderableDocumentList} from './components/SyncableOrderableDocumentList'
 
 const singletonTypes = new Set(['about', 'header'])
@@ -18,25 +18,36 @@ function syncableOrderableList(
   const perspectiveStack = Reflect.get(context, 'perspectiveStack')
   const currentVersion = Array.isArray(perspectiveStack) ? perspectiveStack[0] : undefined
   const client = context.getClient({apiVersion: '2026-06-20'})
+  const menuItems = [
+    S.menuItem().title(`Crea ${title}`).intent({type: 'create', params: {type}}).serialize(),
+    S.menuItem().title('Reset Order').icon(GenerateIcon).action('resetOrder').serialize(),
+    S.menuItem()
+      .title('Sincronizza ordine da Pubblicato')
+      .icon(SyncIcon)
+      .action('syncPublishedOrder')
+      .serialize(),
+    S.menuItem().title('Toggle Increments').icon(SortIcon).action('showIncrements').serialize(),
+  ]
+
+  const orderablePane = Object.assign(
+    S.documentTypeList(type)
+      .canHandleIntent((_intentName, params) => params?.type === type)
+      .serialize(),
+    {
+      __preserveInstance: true,
+      key: id,
+      type: 'component' as const,
+      component: SyncableOrderableDocumentList,
+      options: {type, client, currentVersion},
+      menuItems,
+    },
+  ) as Child
 
   return S.listItem()
     .id(id)
     .title(title)
     .schemaType(type)
-    .child(
-      S.component()
-        .id(id)
-        .title(title)
-        .component(SyncableOrderableDocumentList)
-        .options({type, client, currentVersion})
-        .canHandleIntent((_intentName, params) => params?.type === type)
-        .menuItems([
-          S.menuItem().title(`Crea ${title}`).intent({type: 'create', params: {type}}),
-          S.menuItem().title('Reset Order').icon(GenerateIcon).action('resetOrder'),
-          S.menuItem().title('Sincronizza ordine da Pubblicato').icon(SyncIcon).action('syncPublishedOrder'),
-          S.menuItem().title('Toggle Increments').icon(SortIcon).action('showIncrements'),
-        ]),
-    )
+    .child(orderablePane)
 }
 
 export const structure: StructureResolver = (S, context) =>
