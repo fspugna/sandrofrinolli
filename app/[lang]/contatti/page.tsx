@@ -1,9 +1,6 @@
-import { FadeIn, FadeUp } from '@/components/Animate';
 import { Header } from '@/components/Header';
 import { client } from '@/sanity/lib/client';
-import { motion } from 'framer-motion';
-import { Contatti, labelsTranslations, SocialItem } from '@/types';
-import Image from 'next/image';
+import { Contatti } from '@/types';
 import ContactsView from '@/components/ContactsView';
 
 async function getContattiData(): Promise<Contatti> {

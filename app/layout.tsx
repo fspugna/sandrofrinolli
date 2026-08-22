@@ -3,6 +3,7 @@ import 'yet-another-react-lightbox/styles.css';
 import "./globals.css";
 
 import { Inter, Playfair_Display } from 'next/font/google';
+import Script from 'next/script';
 import { AnalyticsConsent } from '@/components/AnalyticsConsent';
 
 const playfair = Playfair_Display({ subsets: ['latin'], variable: '--font-serif' });
@@ -23,6 +24,13 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         {children}
         <AnalyticsConsent />
+        <Script id="google-consent-default" strategy="beforeInteractive">{`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          window.gtag = gtag;
+          gtag('consent', 'default', {analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',wait_for_update:500});
+          gtag('set', 'ads_data_redaction', true);
+        `}</Script>
       </body>
     </html>
   );

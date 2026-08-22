@@ -1,7 +1,7 @@
 'use client';
 import { urlFor } from '@/sanity/lib/image';
 import { getPrimaryImage } from '@/lib/utils';
-import { Notizia, SanityImage } from '@/types';
+import { Notizia } from '@/types';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Header } from './Header';

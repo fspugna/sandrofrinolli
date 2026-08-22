@@ -1,6 +1,5 @@
 import AltriVideo from '@/components/AltriVideo';
 import { FadeUp } from '@/components/Animate';
-import { Footer } from '@/components/Footer';
 import { Header } from '@/components/Header';
 import {getLocalizedVideoTitle, getVideoEmbedUrl} from '@/lib/video';
 import { client } from '@/sanity/lib/client';

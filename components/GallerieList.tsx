@@ -4,7 +4,6 @@ import { urlFor } from '@/sanity/lib/image';
 import { Galleria } from '@/types';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Footer } from './Footer';
 // 👇 IMPORTA MOTION E LE VARIANTI DEI TIPI
 import { motion, Variants } from 'framer-motion';
 

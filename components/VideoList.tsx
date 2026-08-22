@@ -3,7 +3,6 @@ import { Video } from '@/types';
 import Link from 'next/link';
 import { Header } from './Header';
 import Image from 'next/image';
-import { Footer } from './Footer';
 import { getYouTubeThumbnail } from '@/lib/video';
 // 👇 IMPORTA MOTION E LE VARIANTI DEI TIPI
 import { motion, Variants } from 'framer-motion';

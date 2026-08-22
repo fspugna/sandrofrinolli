@@ -1,7 +1,7 @@
 'use client';
 import { urlFor } from '@/sanity/lib/image';
 import { getPrimaryImage } from '@/lib/utils';
-import { Recensione, SanityImage } from '@/types';
+import { Recensione } from '@/types';
 import Image from 'next/image';
 import Link from 'next/link';
 // 👇 IMPORTA MOTION E LE VARIANTI DEI TIPI
